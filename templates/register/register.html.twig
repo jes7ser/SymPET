@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — SymPet{% endblock %}
+
+{% block stylesheets %}
+    .auth-section {
+        min-height: calc(100vh - 130px);
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #f7f3ee 0%, #e8f5ee 100%);
+        padding: 2rem 0;
+    }
+
+    .auth-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(76,175,130,.12);
+        overflow: hidden;
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .auth-header {
+        background: linear-gradient(135deg, #4caf82, #3a9068);
+        padding: 2rem;
+        text-align: center;
+        color: #fff;
+    }
+
+    .auth-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+    .auth-header p  { opacity: .85; margin: .3rem 0 0; font-size: .9rem; }
+
+    .auth-body { padding: 2rem; }
+
+    .form-control {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        padding: .6rem 1rem;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-control:focus {
+        border-color: #4caf82;
+        box-shadow: 0 0 0 3px rgba(76,175,130,.15);
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4caf82, #3a9068);
+        border: none;
+        border-radius: 50px;
+        padding: .7rem;
+        font-weight: 700;
+        color: #fff;
+        width: 100%;
+        transition: opacity .2s, transform .2s;
+    }
+
+    .btn-submit:hover { opacity: .9; transform: translateY(-1px); color: #fff; }
+
+    .auth-footer { text-align: center; margin-top: 1rem; font-size: .9rem; color: #718096; }
+    .auth-footer a { color: #4caf82; font-weight: 600; text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    .section-label {
+        font-size: .75rem;
+        font-weight: 700;
+        color: #4caf82;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: .4rem;
+        margin-bottom: 1rem;
+    }
+{% endblock %}
+
+{% block body %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div style="font-size:2rem">🐾</div>
+                <h1>Créer un compte</h1>
+                <p>Rejoignez la communauté SymPet</p>
+            </div>
+            <div class="auth-body">
+                <form method="post" action="{{ path('app_register') }}">
+
+                    <p class="section-label"><i class="bi bi-person me-1"></i>Identité</p>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" class="form-control"
+                                   placeholder="Votre nom" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" class="form-control"
+                                   placeholder="Votre prénom" required>
+                        </div>
+                    </div>
+
+                    <p class="section-label"><i class="bi bi-envelope me-1"></i>Contact</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               placeholder="votre@email.com" required>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-7">
+                            <label class="form-label fw-semibold" for="telephone">Téléphone</label>
+                            <input type="tel" id="telephone" name="telephone" class="form-control"
+                                   placeholder="+216 XX XXX XXX" required>
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label fw-semibold" for="adresse">Ville</label>
+                            <input type="text" id="adresse" name="adresse" class="form-control"
+                                   placeholder="Votre ville" required>
+                        </div>
+                    </div>
+
+                    <p class="section-label"><i class="bi bi-shield-lock me-1"></i>Sécurité</p>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="password">Mot de passe</label>
+                            <input type="password" id="password" name="password" class="form-control"
+                                   placeholder="Min. 6 caractères" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold" for="confirm">Confirmer</label>
+                            <input type="password" id="confirm" name="confirm" class="form-control"
+                                   placeholder="Confirmer votre mot de passe" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit">
+                        <i class="bi bi-person-check me-2"></i>S'inscrire
+                    </button>
+                </form>
+                <div class="auth-footer mt-3">
+                    Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
