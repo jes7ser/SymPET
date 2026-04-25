@@ -1,0 +1,39 @@
+{{ form_start(form) }}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Informations Générales</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.nom) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.categorie) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.prix) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.stock) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_row(form.description) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_row(form.image) }}
+                {% if produit.image %}
+                    <p class="mt-2 text-muted small">Image actuelle : {{ produit.image }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-success">
+        <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
+    </button>
+{{ form_end(form) }}

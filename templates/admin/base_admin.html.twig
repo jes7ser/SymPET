@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        
+        <!-- Sidebar latérale gauche -->
+        <div class="col-md-3 col-lg-2 p-0 bg-dark shadow-sm min-vh-100">
+            <div class="d-flex flex-column p-3 text-white">
+                <h5 class="mb-4">🛠️ Admin</h5>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('admin_categorie_index') }}" 
+                           class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_categorie' %}active{% else %}text-white{% endif %}">
+                            <i class="bi bi-tag me-2"></i>Catégories
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('admin_produit_index') }}" 
+                           class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_produit' %}active{% else %}text-white{% endif %}">
+                            <i class="bi bi-box-seam me-2"></i>Produits
+                        </a>
+                    </li>
+                </ul>
+                <hr>
+                <a href="{{ path('app_home') }}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left"></i> Retour au site
+                </a>
+            </div>
+        </div>
+
+        <!-- Zone de contenu à droite -->
+        <div class="col-md-9 col-lg-10 p-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {% block admin_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

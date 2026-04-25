@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymPET - Accueil{% endblock %}
+
+{% block body %}
+    <div class="p-5 mb-4 bg-light rounded-3 border-bottom shadow-sm">
+        <div class="container py-5 text-center">
+            <h1 class="display-5 fw-bold">SymPET 🐾</h1>
+            <p class="fs-4 text-muted">Votre boutique en ligne pour tous vos animaux de compagnie.</p>
+            <hr class="my-4">
+            <p>Découvrez notre large gamme de nourriture et d'accessoires.</p>
+            <a class="btn btn-primary btn-lg" href="#" role="button">Voir la boutique</a>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="pb-2 border-bottom">Nos Services</h2>
+            </div>
+        </div>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            <div class="feature col text-center">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
+                    <i class="bi bi-truck text-primary"></i>
+                </div>
+                <h3>Livraison Rapide</h3>
+                <p>Recevez vos commandes en moins de 48h partout en France.</p>
+            </div>
+            <div class="feature col text-center">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
+                    <i class="bi bi-shield-check text-success"></i>
+                </div>
+                <h3>Paiement Sécurisé</h3>
+                <p>Nous utilisons des protocoles de sécurité avancés pour vos achats.</p>
+            </div>
+            <div class="feature col text-center">
+                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
+                    <i class="bi bi-headset text-info"></i>
+                </div>
+                <h3>Support 24/7</h3>
+                <p>Notre équipe est disponible pour répondre à toutes vos questions.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
