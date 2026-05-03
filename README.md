@@ -10,22 +10,28 @@ SymPET est une application web e-commerce dédiée à la vente en ligne de nourr
 
 ---
 
-## 🚀 Fonctionnalités Actuelles (Étape 3)
+## 🚀 Fonctionnalités Actuelles (Étape 4)
+
+### Espace Client (Vitrine)
+- ✅ Affichage d'une **Boutique** avec tous les produits (Image, Nom, Prix).
+- ✅ **Recherche** multicritères : par nom (texte libre) et par catégorie (liste déroulante) via le QueryBuilder.
+- ✅ Fiche détaillée du produit (`/user/boutique/produit/{id}`).
+- ✅ Intégration de la **Pagination** (`KnpPaginator`) avec 8 produits par page.
+- ✅ Structure MVC propre : Séparation entre le dossier "User" et "Admin".
 
 ### Espace Administration (CRUD)
-- ✅ Gestion complète des **Catégories** (Ajout, Édition, Suppression, Liste formattée).
+- ✅ Gestion complète des **Catégories** (Ajout, Édition, Suppression avec des liens directs `<a>`).
 - ✅ Gestion complète des **Produits** (Ajout, Édition, Suppression).
-- ✅ **Upload d'images** sécurisé avec `SluggerInterface` pour les fiches produits.
+- ✅ Style d'architecture adapté aux exigences académiques (pas de système de fichiers complexe pour les images, tout passe par des requêtes simples).
 - ✅ Pagination dynamique intégrée avec `KnpPaginatorBundle`.
-- ✅ Design responsive via **Bootstrap 5** natif.
+- ✅ Design responsive via **Bootstrap 5** natif (avec Sidebar fixe).
 - ✅ Notifications Flash (Succès / Erreur) sur chaque action.
 
 ### Base de Données & Fixtures
-- ✅ Génération massive de données de tests (`FakerPHP`).
-- ✅ Génération automatique : 5 Catégories, 50 Produits avec images et prix.
-- ✅ Base de données relationnelle saine sous **Doctrine ORM**.
+- ✅ Génération de données de tests (`FakerPHP`).
+- ✅ Base de données relationnelle (Doctrine ORM).
 
-*(À venir : Vitrine Client, Panier, Commande et Tableau de bord Admin).*
+*(À venir : Panier d'achat en session, Système de Commande et Sécurité finale).*
 
 ---
 
