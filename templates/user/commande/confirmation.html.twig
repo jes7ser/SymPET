@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %}Commande confirmée — SymPet{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                <div style="font-size:4rem">✅</div>
+                <h2 class="fw-bold mt-3 text-success">Commande confirmée !</h2>
+                <p class="text-muted">Votre commande <strong>#{{ commande.id }}</strong> a été enregistrée avec succès.</p>
+
+                <div class="card bg-light border-0 rounded-3 p-3 my-3 text-start">
+                    <div class="row">
+                        <div class="col-6 text-muted">Numéro</div>
+                        <div class="col-6 fw-bold">#{{ commande.id }}</div>
+                        <div class="col-6 text-muted">Date</div>
+                        <div class="col-6">{{ commande.dateCreation|date('d/m/Y') }}</div>
+                        <div class="col-6 text-muted">Statut</div>
+                        <div class="col-6">
+                            <span class="badge bg-warning text-dark rounded-pill">En attente</span>
+                        </div>
+                        <div class="col-6 text-muted">Total</div>
+                        <div class="col-6 fw-bold text-success">{{ commande.total|number_format(2, ',', ' ') }} DT</div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <a href="{{ path('produit_index') }}" class="btn btn-success rounded-pill px-4">
+                        <i class="bi bi-grid me-2"></i>Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
