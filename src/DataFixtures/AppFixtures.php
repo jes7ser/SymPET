@@ -26,16 +26,16 @@ class AppFixtures extends Fixture
         // ── Création d'un Admin ─────────────────────────
         $admin = new User();
         $admin->setEmail('admin@sympet.com')
-              ->setRoles(['ROLE_ADMIN'])
-              ->setPassword($this->hasher->hashPassword($admin, 'admin123'));
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPassword($this->hasher->hashPassword($admin, 'admin123'));
         $manager->persist($admin);
 
         // ── Création d'utilisateurs ─────────────────────
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
             $user->setEmail($faker->email())
-                 ->setRoles(['ROLE_USER'])
-                 ->setPassword($this->hasher->hashPassword($user, 'user123'));
+                ->setRoles(['ROLE_USER'])
+                ->setPassword($this->hasher->hashPassword($user, 'user123'));
             $manager->persist($user);
         }
 
@@ -54,12 +54,12 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 50; $i++) {
             $produit = new Produit();
             $produit->setNom($faker->words(3, true))
-                    ->setDescription($faker->paragraph())
-                    ->setPrix($faker->randomFloat(2, 5, 200))
-                    ->setStock($faker->numberBetween(0, 100))
-                    ->setImage('https://loremflickr.com/640/480/pet,animal?lock='.$i) // Image placeholders
-                    ->setCategorie($faker->randomElement($categories));
-            
+                ->setDescription($faker->paragraph())
+                ->setPrix($faker->randomFloat(2, 5, 200))
+                ->setStock($faker->numberBetween(0, 100))
+                ->setImage('https://loremflickr.com/640/480/pet,animal?lock=' . $i) // Image placeholders
+                ->setCategorie($faker->randomElement($categories));
+
             $manager->persist($produit);
         }
 

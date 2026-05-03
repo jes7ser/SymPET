@@ -8,16 +8,14 @@ use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/produit')]
 class ProduitController extends AbstractController
 {
-    #[Route('/', name: 'admin_produit_index', methods: ['GET'])]
+    #[Route('/', name: 'admin_produit_index')]
     public function index(ProduitRepository $produitRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $pagination = $paginator->paginate(
@@ -31,39 +29,24 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'admin_produit_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    #[Route('/new', name: 'admin_produit_new')]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('image')->getData();
+            try {
+                $produit = $form->getData();
+                $entityManager->persist($produit);
+                $entityManager->flush();
 
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('uploads_dir'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
-
-                $produit->setImage($newFilename);
+                $this->addFlash('success', 'Produit ajouté avec succès !');
+                return $this->redirectToRoute('admin_produit_index');
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Erreur : ' . $e->getMessage());
             }
-
-            $entityManager->persist($produit);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Le produit a été créé avec succès !');
-
-            return $this->redirectToRoute('admin_produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/produit/new.html.twig', [
@@ -72,37 +55,23 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_produit_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    #[Route('/{id}/edit', name: 'admin_produit_edit')]
+    public function edit(Request $request, ProduitRepository $rep, $id, EntityManagerInterface $entityManager): Response
     {
+        $produit = $rep->find($id);
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('image')->getData();
+            try {
+                $produit = $form->getData();
+                $entityManager->flush();
 
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('uploads_dir'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
-
-                $produit->setImage($newFilename);
+                $this->addFlash('success', 'Produit modifié avec succès !');
+                return $this->redirectToRoute('admin_produit_index');
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Erreur : ' . $e->getMessage());
             }
-
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Le produit a été modifié avec succès !');
-
-            return $this->redirectToRoute('admin_produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/produit/edit.html.twig', [
@@ -111,16 +80,14 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'admin_produit_delete', methods: ['POST'])]
-    public function delete(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
+    #[Route('/delete/{id}', name: 'admin_produit_delete')]
+    public function delete(ProduitRepository $rep, $id, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($produit);
-            $entityManager->flush();
+        $produit = $rep->find($id);
+        $entityManager->remove($produit);
+        $entityManager->flush();
 
-            $this->addFlash('success', 'Le produit a été supprimé !');
-        }
-
-        return $this->redirectToRoute('admin_produit_index', [], Response::HTTP_SEE_OTHER);
+        $this->addFlash('success', 'Produit supprimé !');
+        return $this->redirectToRoute('admin_produit_index');
     }
 }

@@ -27,7 +27,7 @@
                         <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Boutique</a>
+                        <a class="nav-link" href="{{ path('app_user_vitrine') }}">Boutique</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -46,17 +46,24 @@
         </div>
     </nav>
 
-    {# Flash messages #}
-    <div class="container mt-3">
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+    {# Flash messages conditionnels #}
+    {% set has_flashes = false %}
+    {% for label, messages in app.flashes %}
+        {% set has_flashes = true %}
+    {% endfor %}
+
+    {% if has_flashes %}
+        <div class="container mt-3">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-    </div>
+        </div>
+    {% endif %}
 
     {# Contenu principal #}
     <main class="flex-shrink-0">

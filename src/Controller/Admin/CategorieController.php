@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/categorie')]
 class CategorieController extends AbstractController
 {
-    #[Route('/', name: 'admin_categorie_index', methods: ['GET'])]
+    #[Route('/', name: 'admin_categorie_index')]
     public function index(CategorieRepository $categorieRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $pagination = $paginator->paginate(
@@ -29,7 +29,7 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'admin_categorie_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'admin_categorie_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $categorie = new Categorie();
@@ -37,12 +37,16 @@ class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($categorie);
-            $entityManager->flush();
+            try {
+                $categorie = $form->getData();
+                $entityManager->persist($categorie);
+                $entityManager->flush();
 
-            $this->addFlash('success', 'La catégorie a été créée avec succès !');
-
-            return $this->redirectToRoute('admin_categorie_index', [], Response::HTTP_SEE_OTHER);
+                $this->addFlash('success', 'Catégorie ajoutée avec succès !');
+                return $this->redirectToRoute('admin_categorie_index');
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Une erreur est survenue lors de l\'ajout');
+            }
         }
 
         return $this->render('admin/categorie/new.html.twig', [
@@ -51,18 +55,23 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_categorie_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/edit', name: 'admin_categorie_edit')]
+    public function edit(Request $request, CategorieRepository $rep, $id, EntityManagerInterface $entityManager): Response
     {
+        $categorie = $rep->find($id);
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            try {
+                $categorie = $form->getData();
+                $entityManager->flush();
 
-            $this->addFlash('success', 'La catégorie a été modifiée avec succès !');
-
-            return $this->redirectToRoute('admin_categorie_index', [], Response::HTTP_SEE_OTHER);
+                $this->addFlash('success', 'Catégorie modifiée avec succès !');
+                return $this->redirectToRoute('admin_categorie_index');
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Une erreur est survenue lors de la modification');
+            }
         }
 
         return $this->render('admin/categorie/edit.html.twig', [
@@ -71,16 +80,14 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'admin_categorie_delete', methods: ['POST'])]
-    public function delete(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
+    #[Route('/delete/{id}', name: 'admin_categorie_delete')]
+    public function delete(CategorieRepository $rep, $id, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$categorie->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($categorie);
-            $entityManager->flush();
+        $categorie = $rep->find($id);
+        $entityManager->remove($categorie);
+        $entityManager->flush();
 
-            $this->addFlash('success', 'La catégorie a été supprimée !');
-        }
-
-        return $this->redirectToRoute('admin_categorie_index', [], Response::HTTP_SEE_OTHER);
+        $this->addFlash('success', 'Catégorie supprimée !');
+        return $this->redirectToRoute('admin_categorie_index');
     }
 }

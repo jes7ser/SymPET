@@ -13,6 +13,9 @@ class CategorieType extends AbstractType
     {
         $builder
             ->add('nom')
+            ->add('Enregistrer', \Symfony\Component\Form\Extension\Core\Type\SubmitType::class, [
+                'attr' => ['class' => 'btn btn-success mt-3']
+            ])
         ;
     }
 

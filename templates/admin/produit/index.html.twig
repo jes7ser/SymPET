@@ -27,11 +27,11 @@
                 <tr>
                     <td>
                         {% if produit.image %}
-                            {% if 'http' in produit.image %}
-                                <img src="{{ produit.image }}" class="img-thumbnail img-thumbnail-sm" alt="{{ produit.nom }}">
-                            {% else %}
-                                <img src="{{ asset('uploads/produits/' ~ produit.image) }}" class="img-thumbnail img-thumbnail-sm" alt="{{ produit.nom }}">
-                            {% endif %}
+                        {% if 'http' in produit.image %}
+                            <img src="{{ produit.image }}" alt="{{ produit.nom }}" style="height: 200px; width: 200px; object-fit: cover; border-radius: 4px;">
+                        {% else %}
+                            <img src="{{ asset('uploads/produits/' ~ produit.image) }}" alt="{{ produit.nom }}" style="height: 80px; width: 80px; object-fit: cover; border-radius: 4px;">
+                        {% endif %}
                         {% else %}
                             <span class="text-muted small">Pas d'image</span>
                         {% endif %}
@@ -55,12 +55,9 @@
                             <a href="{{ path('admin_produit_edit', {'id': produit.id}) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <form method="post" action="{{ path('admin_produit_delete', {'id': produit.id}) }}" onsubmit="return confirm('Supprimer ce produit ?');" style="display:inline-block">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                            <a href="{{ path('admin_produit_delete', {'id': produit.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce produit ?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
                         </div>
                     </td>
                 </tr>
