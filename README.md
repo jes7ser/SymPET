@@ -22,7 +22,7 @@ SymPET est une application web e-commerce dédiée à la vente en ligne de nourr
 ### Espace Administration (CRUD)
 - ✅ Gestion complète des **Catégories** (Ajout, Édition, Suppression avec des liens directs `<a>`).
 - ✅ Gestion complète des **Produits** (Ajout, Édition, Suppression).
-- ✅ Style d'architecture adapté aux exigences académiques (pas de système de fichiers complexe pour les images, tout passe par des requêtes simples).
+
 - ✅ Pagination dynamique intégrée avec `KnpPaginatorBundle`.
 - ✅ Design responsive via **Bootstrap 5** natif (avec Sidebar fixe).
 - ✅ Notifications Flash (Succès / Erreur) sur chaque action.
