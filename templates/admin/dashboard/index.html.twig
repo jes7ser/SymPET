@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin - SymPet{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4 fw-bold">Tableau de bord Administrateur</h1>
+    </div>
+</div>
+
+<div class="row g-4 mb-4 text-center">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-primary text-white h-100 py-2">
+            <div class="card-body">
+                <div class="mb-2"><i class="fas fa-users fa-2x opacity-50"></i></div>
+                <h6 class="text-uppercase small fw-bold">Total Clients</h6>
+                <h2 class="display-6 fw-bold">{{ totalClients }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-success text-white h-100 py-2">
+            <div class="card-body">
+                <div class="mb-2"><i class="fas fa-wallet fa-2x opacity-50"></i></div>
+                <h6 class="text-uppercase small fw-bold">Chiffre d'Affaires</h6>
+                <h2 class="display-6 fw-bold">{{ totalRevenue|number_format(3, ',', ' ') }} DT</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-info text-white h-100 py-2">
+            <div class="card-body">
+                <div class="mb-2"><i class="fas fa-star fa-2x opacity-50"></i></div>
+                <h6 class="text-uppercase small fw-bold">Top Produit</h6>
+                <h4 class="fw-bold">{{ bestSeller ? bestSeller.name : 'N/A' }}</h4>
+                <p class="small mb-0">{{ bestSeller ? bestSeller.totalSales ~ ' ventes' : '' }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-warning text-white h-100 py-2">
+            <div class="card-body">
+                <div class="mb-2"><i class="fas fa-shopping-cart fa-2x opacity-50"></i></div>
+                <h6 class="text-uppercase small fw-bold">Commandes (6 mois)</h6>
+                <h2 class="display-6 fw-bold">{{ totalOrders }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4">Commandes par période</h5>
+                <canvas id="ordersChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 text-center">
+                <h5 class="card-title fw-bold mb-4 text-start">Raccourcis Admin</h5>
+                <div class="d-grid gap-3 mt-4">
+                    <a href="{{ path('admin_product_new') }}" class="btn btn-outline-primary py-3">
+                        <i class="fas fa-plus me-2"></i>Nouveau Produit
+                    </a>
+                    <a href="{{ path('admin_category_index') }}" class="btn btn-outline-secondary py-3">
+                        <i class="fas fa-tags me-2"></i>Gérer Catégories
+                    </a>
+                    <a href="#" class="btn btn-outline-dark py-3">
+                        <i class="fas fa-shopping-bag me-2"></i>Voir Commandes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        const labels = {{ chartLabels|raw }};
+        const data = {{ chartData|raw }};
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nombre de commandes',
+                    data: data,
+                    backgroundColor: 'rgba(108, 92, 231, 0.7)',
+                    borderColor: '#6c5ce7',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

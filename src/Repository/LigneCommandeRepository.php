@@ -12,4 +12,15 @@ class LigneCommandeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LigneCommande::class);
     }
+    public function getBestSeller(): ?array
+    {
+        return $this->createQueryBuilder('lc')
+            ->select('p.nom as name, SUM(lc.quantite) as totalSales')
+            ->join('lc.produit', 'p')
+            ->groupBy('p.id')
+            ->orderBy('totalSales', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modération des Avis - SymPet{% endblock %}
+
+{% block body %}
+<div class="mb-4">
+    <h1>Modération des Avis Clients</h1>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Date</th>
+                        <th>Client</th>
+                        <th>Produit</th>
+                        <th>Note</th>
+                        <th>Commentaire</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for avis in avis_list %}
+                    <tr>
+                        <td class="ps-4 text-muted small">{{ avis.dateCreation|date('d/m/Y') }}</td>
+                        <td>
+                            <div class="fw-bold">{{ avis.utilisateur.prenom }} {{ avis.utilisateur.nom }}</div>
+                        </td>
+                        <td>{{ avis.produit.nom }}</td>
+                        <td>
+                            <div class="text-warning">
+                                {% for i in 1..5 %}
+                                    <i class="{{ i <= avis.note ? 'fas' : 'far' }} fa-star"></i>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <p class="mb-0 small text-truncate" style="max-width: 300px;" title="{{ avis.commentaire }}">
+                                {{ avis.commentaire }}
+                            </p>
+                        </td>
+                        <td class="text-end pe-4">
+                            <form method="post" action="{{ path('admin_review_delete', {'id': avis.id}) }}" onsubmit="return confirm('Supprimer cet avis ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avis.id) }}">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Aucun avis pour le moment.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

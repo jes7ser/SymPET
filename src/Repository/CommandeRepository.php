@@ -12,17 +12,27 @@ class CommandeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Commande::class);
     }
-
-    public function findByStatut(?string $statut): array
+    public function getTotalRevenue(): float
     {
-        $qb = $this->createQueryBuilder('c')
-            ->orderBy('c.dateCreation', 'DESC');
+        return $this->createQueryBuilder('c')
+            ->select('SUM(lc.prixUnitaire * lc.quantite)')
+            ->join('c.ligneCommandes', 'lc')
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0.0;
+    }
 
-        if ($statut) {
-            $qb->andWhere('c.statut = :statut')
-               ->setParameter('statut', $statut);
-        }
+    public function getMonthlyOrders(): array
+    {
+        $date = new \DateTime();
+        $date->modify('-6 months');
 
-        return $qb->getQuery()->getResult();
+        return $this->createQueryBuilder('c')
+            ->select('SUBSTRING(c.dateCreation, 1, 7) as month, COUNT(c.id) as count')
+            ->where('c.dateCreation >= :date')
+            ->setParameter('date', $date)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

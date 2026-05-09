@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe - SymPet{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-4 fw-bold text-center">Nouveau mot de passe</h1>
+
+                {{ form_start(resetForm) }}
+                    <div class="mb-3">
+                        <label class="form-label">Nouveau mot de passe</label>
+                        <div class="input-group mb-2">
+                            {{ form_widget(resetForm.plainPassword.first) }}
+                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="change_password_form_plainPassword_first">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        {{ form_errors(resetForm.plainPassword.first) }}
+
+                        <label class="form-label mt-2">Confirmer le nouveau mot de passe</label>
+                        <div class="input-group">
+                            {{ form_widget(resetForm.plainPassword.second) }}
+                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="change_password_form_plainPassword_second">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        {{ form_errors(resetForm.plainPassword.second) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Changer le mot de passe</button>
+                {{ form_end(resetForm) }}
+
+                <script>
+                    document.querySelectorAll('.toggle-password').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const targetId = this.getAttribute('data-target');
+                            const input = document.getElementById(targetId);
+                            const icon = this.querySelector('i');
+                            
+                            if (input.type === 'password') {
+                                input.type = 'text';
+                                icon.classList.remove('fa-eye');
+                                icon.classList.add('fa-eye-slash');
+                            } else {
+                                input.type = 'password';
+                                icon.classList.remove('fa-eye-slash');
+                                icon.classList.add('fa-eye');
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

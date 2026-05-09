@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Commandes - SymPet{% endblock %}
+
+{% block body %}
+<div class="mb-4">
+    <h1>Gestion des Commandes</h1>
+</div>
+
+<!-- Filtres par statut -->
+<div class="mb-4 d-flex gap-2 flex-wrap">
+    <a href="{{ path('admin_order_index') }}" class="btn {{ current_status is empty ? 'btn-dark' : 'btn-outline-dark' }}">Toutes</a>
+    <a href="{{ path('admin_order_index', {status: 'En attente'}) }}" class="btn {{ current_status == 'En attente' ? 'btn-warning' : 'btn-outline-warning' }}">En attente</a>
+    <a href="{{ path('admin_order_index', {status: 'En cours'}) }}" class="btn {{ current_status == 'En cours' ? 'btn-info' : 'btn-outline-info' }}">En cours</a>
+    <a href="{{ path('admin_order_index', {status: 'Complétée'}) }}" class="btn {{ current_status == 'Complétée' ? 'btn-success' : 'btn-outline-success' }}">Complétées</a>
+    <a href="{{ path('admin_order_index', {status: 'Annulée'}) }}" class="btn {{ current_status == 'Annulée' ? 'btn-danger' : 'btn-outline-danger' }}">Annulées</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for commande in commandes %}
+                    <tr>
+                        <td class="ps-4">#{{ commande.id }}</td>
+                        <td>
+                            <div class="fw-bold">{{ commande.utilisateur.prenom }} {{ commande.utilisateur.nom }}</div>
+                            <small class="text-muted">{{ commande.utilisateur.email }}</small>
+                        </td>
+                        <td>{{ commande.dateCreation|date('d/m/Y H:i') }}</td>
+                        <td class="fw-bold">{{ commande.total|number_format(3, ',', ' ') }} DT</td>
+                        <td>
+                            {% set badge_class = 'bg-secondary' %}
+                            {% if commande.statut == 'En attente' %}{% set badge_class = 'bg-warning text-dark' %}
+                            {% elseif commande.statut == 'En cours' %}{% set badge_class = 'bg-info text-dark' %}
+                            {% elseif commande.statut == 'Complétée' %}{% set badge_class = 'bg-success' %}
+                            {% elseif commande.statut == 'Annulée' %}{% set badge_class = 'bg-danger' %}
+                            {% endif %}
+                            <span class="badge {{ badge_class }}">{{ commande.statut }}</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{{ path('admin_order_show', {id: commande.id}) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Détails
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Aucune commande trouvée.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

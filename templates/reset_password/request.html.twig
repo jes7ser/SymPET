@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié - SymPet{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-4 fw-bold text-center">Réinitialisation</h1>
+                <p class="text-muted small mb-4 text-center">Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+
+                {{ form_start(requestForm) }}
+                    <div class="mb-3">
+                        {{ form_label(requestForm.email) }}
+                        {{ form_widget(requestForm.email) }}
+                        {{ form_errors(requestForm.email) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Envoyer le lien</button>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{{ path('app_login') }}" class="text-decoration-none small">Retour à la connexion</a>
+                    </div>
+                {{ form_end(requestForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
