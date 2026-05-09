@@ -4,79 +4,255 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Notre Boutique</h1>
+    <div class="row">
+        <!-- Colonne gauche — Sidebar filtre -->
+        <div class="col-md-3">
+            <div class="card p-3 mb-4" style="border-left: 5px solid #198754;">
+                <h4 class="mb-3 text-success">Filtrer</h4>
+                
+                <form action="{{ path('app_user_vitrine') }}" method="get" id="filterForm">
+                    <!-- Recherche par nom (cachée) -->
+                    <input type="hidden" name="nom" value="{{ filtres.nom }}">
 
-    <!-- Formulaire de recherche -->
-    <div class="card p-3 mb-4 bg-light">
-        <form action="{{ path('app_user_vitrine') }}" method="get" class="row g-3">
-            <div class="col-md-5">
-                <input type="text" name="nom" class="form-control" placeholder="Rechercher un produit par nom..." value="{{ nom }}">
-            </div>
-            <div class="col-md-5">
-                <select name="categorie" class="form-select">
-                    <option value="">Toutes les catégories</option>
-                    {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if categorieChoisie == cat.id %}selected{% endif %}>
-                            {{ cat.nom }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="bi bi-search"></i> Chercher
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Liste des produits -->
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for produit in produits %}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <!-- Image -->
-                    {% if produit.image %}
-                        {% if 'http' in produit.image %}
-                            <img src="{{ produit.image }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;">
-                        {% else %}
-                            <img src="{{ asset('uploads/produits/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;">
-                        {% endif %}
-                    {% else %}
-                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <span>Pas d'image</span>
+                    <!-- Section Prix -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Prix</label>
+                        <div class="mb-2">
+                            <small class="text-muted">Min: <span id="minPriceLabel">{{ filtres.prix_min|default(prixMinMax.min) }}</span> DT</small>
+                            <input type="range" class="form-range" name="prix_min" id="prix_min" 
+                                   min="{{ prixMinMax.min }}" max="{{ prixMinMax.max }}" 
+                                   value="{{ filtres.prix_min|default(prixMinMax.min) }}"
+                                   oninput="document.getElementById('minPriceLabel').innerText = this.value">
                         </div>
-                    {% endif %}
-                    
-                    <div class="card-body d-flex flex-column">
-                        <!-- Nom -->
-                        <h5 class="card-title">{{ produit.nom }}</h5>
-                        
-                        <!-- Prix -->
-                        <h4 class="text-primary mb-3">{{ produit.prix|number_format(3, ',', ' ') }} DT</h4>
-                        
-                        <!-- Boutons -->
-                        <div class="mt-auto d-grid gap-2">
-                            <a href="{{ path('app_user_vitrine_show', {'id': produit.id}) }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-eye"></i> Voir détail
-                            </a>
-                            <a href="#" class="btn btn-success">
-                                <i class="bi bi-cart-plus"></i> Ajouter au panier
-                            </a>
+                        <div class="mb-2">
+                            <small class="text-muted">Max: <span id="maxPriceLabel">{{ filtres.prix_max|default(prixMinMax.max) }}</span> DT</small>
+                            <input type="range" class="form-range" name="prix_max" id="prix_max" 
+                                   min="{{ prixMinMax.min }}" max="{{ prixMinMax.max }}" 
+                                   value="{{ filtres.prix_max|default(prixMinMax.max) }}"
+                                   oninput="document.getElementById('maxPriceLabel').innerText = this.value">
                         </div>
                     </div>
+
+                    <!-- Section Catégories -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Catégories</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="categorie" id="cat_all" value="" {% if filtres.categorie == '' %}checked{% endif %}>
+                            <label class="form-check-label" for="cat_all">Toutes</label>
+                        </div>
+                        {% for cat in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="categorie" id="cat_{{ cat.id }}" value="{{ cat.id }}" {% if filtres.categorie == cat.id %}checked{% endif %}>
+                                <label class="form-check-label" for="cat_{{ cat.id }}">
+                                    {{ cat.nom }} <span class="badge bg-light text-dark border">({{ cat.produits|length }})</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Section Type de Produit -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Type de produit</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="produit_type" id="type_all" value="" {% if filtres.produit_type == '' %}checked{% endif %}>
+                            <label class="form-check-label" for="type_all">Tous</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="produit_type" id="type_nourriture" value="Nourriture" {% if filtres.produit_type == 'Nourriture' %}checked{% endif %}>
+                            <label class="form-check-label" for="type_nourriture">Nourriture</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="produit_type" id="type_accessoire" value="Accessoire" {% if filtres.produit_type == 'Accessoire' %}checked{% endif %}>
+                            <label class="form-check-label" for="type_accessoire">Accessoires</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mb-2">Appliquer les filtres</button>
+                    <a href="{{ path('app_user_vitrine') }}" class="btn btn-link w-100 text-decoration-none text-muted">Réinitialiser les filtres</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Colonne droite — Grille produits -->
+        <div class="col-md-9">
+            <!-- Barre de recherche et compteur -->
+            <div class="d-flex justify-content-between align-items-center mb-4 bg-light p-3 rounded shadow-sm">
+                <div>
+                    {% if paginaMeta.total > 0 %}
+                        <h5 class="mb-0">
+                            <span class="text-success fw-bold">{{ paginaMeta.debut }}–{{ paginaMeta.fin }}</span>
+                            <span class="text-muted"> sur </span>
+                            <span class="fw-bold">{{ paginaMeta.total }}</span>
+                            <span class="text-muted fs-6"> produits</span>
+                        </h5>
+                        <small class="text-muted">Page {{ paginaMeta.page }} / {{ paginaMeta.pages }}</small>
+                    {% else %}
+                        <h5 class="mb-0 text-muted">Aucun produit trouvé</h5>
+                    {% endif %}
+                </div>
+                <div style="flex-grow: 0.5;">
+                    <form action="{{ path('app_user_vitrine') }}" method="get" class="input-group">
+                        <input type="hidden" name="categorie" value="{{ filtres.categorie }}">
+                        <input type="hidden" name="prix_min" value="{{ filtres.prix_min }}">
+                        <input type="hidden" name="prix_max" value="{{ filtres.prix_max }}">
+                        <input type="hidden" name="produit_type" value="{{ filtres.produit_type }}">
+                        
+                        <input type="text" name="nom" class="form-control" placeholder="Recherche rapide..." value="{{ filtres.nom }}">
+                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
                 </div>
             </div>
-        {% else %}
-            <div class="col-12 text-center py-5">
-                <h3 class="text-muted">Aucun produit ne correspond à votre recherche.</h3>
-            </div>
-        {% endfor %}
-    </div>
 
-    <!-- Pagination ajoutée ici -->
-    <div class="mt-4 d-flex justify-content-center">
-        {{ knp_pagination_render(produits) }}
+            <!-- Grille -->
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {% for produit in produits %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 product-card">
+                            <div class="position-relative">
+                                <span class="badge bg-success position-absolute top-0 start-0 m-2">{{ produit.categorie.nom }}</span>
+                                {% if produit.imageUrl %}
+                                    {% if 'http' in produit.imageUrl %}
+                                        <img src="{{ produit.imageUrl }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 180px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{{ asset('uploads/produits/' ~ produit.imageUrl) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 180px; object-fit: cover;">
+                                    {% endif %}
+                                {% else %}
+                                    <div class="bg-light text-muted d-flex align-items-center justify-content-center" style="height: 180px;">
+                                        <i class="bi bi-image" style="font-size: 2rem;"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-body d-flex flex-column p-3">
+                                <h6 class="card-title fw-bold text-dark mb-1">{{ produit.nom }}</h6>
+                                <h5 class="text-danger fw-bold mb-2">{{ produit.prix|number_format(2, ',', ' ') }} DT</h5>
+                                <div class="mb-3">
+                                    {% if produit.stock > 10 %}
+                                        <span class="text-success small"><i class="bi bi-check-circle-fill"></i> En stock</span>
+                                    {% elseif produit.stock > 0 %}
+                                        <span class="text-warning small"><i class="bi bi-exclamation-triangle-fill"></i> Stock limité</span>
+                                    {% else %}
+                                        <span class="text-danger small"><i class="bi bi-x-circle-fill"></i> Rupture</span>
+                                    {% endif %}
+                                </div>
+                                <div class="mt-auto d-grid gap-2">
+                                    <a href="{{ path('app_user_vitrine_show', {'id': produit.id}) }}" class="btn btn-sm btn-outline-dark">Voir détail</a>
+                                    {% if produit.stock > 0 %}
+                                        <a href="{{ path('app_cart_add', {'id': produit.id}) }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-cart-plus"></i> Ajouter
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-secondary" disabled>
+                                            <i class="bi bi-cart-x"></i> Rupture
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">Aucun produit ne correspond à vos critères.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination personnalisée -->
+            {% if paginaMeta.pages > 1 %}
+            <div class="mt-5 d-flex flex-column align-items-center gap-2">
+
+                <div class="sympet-pagination">
+                    {# Bouton Précédent #}
+                    {% if paginaMeta.page > 1 %}
+                        <a href="{{ path('app_user_vitrine', app.request.query.all|merge({'page': paginaMeta.page - 1})) }}"
+                           class="pag-btn" aria-label="Page précédente">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    {% else %}
+                        <span class="pag-btn pag-btn--disabled" aria-disabled="true">
+                            <i class="bi bi-chevron-left"></i>
+                        </span>
+                    {% endif %}
+
+                    {# Compteur : page / total #}
+                    <span class="pag-counter">{{ paginaMeta.page }}&nbsp;/&nbsp;{{ paginaMeta.pages }}</span>
+
+                    {# Bouton Suivant #}
+                    {% if paginaMeta.page < paginaMeta.pages %}
+                        <a href="{{ path('app_user_vitrine', app.request.query.all|merge({'page': paginaMeta.page + 1})) }}"
+                           class="pag-btn" aria-label="Page suivante">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    {% else %}
+                        <span class="pag-btn pag-btn--disabled" aria-disabled="true">
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
+                    {% endif %}
+                </div>
+
+                <small class="text-muted">
+                    Affichage&nbsp;<strong>{{ paginaMeta.debut }}&ndash;{{ paginaMeta.fin }}</strong>&nbsp;sur&nbsp;<strong>{{ paginaMeta.total }}</strong>&nbsp;produits
+                </small>
+
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<style>
+    /* ── Cartes produits ── */
+    .product-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 28px rgba(0,0,0,.12) !important;
+    }
+
+    /* ── Pagination ── */
+    .sympet-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+    }
+
+    .pag-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 2px solid #198754;
+        color: #198754;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: background 0.18s, color 0.18s;
+        background: #fff;
+        cursor: pointer;
+    }
+    .pag-btn:hover {
+        background: #198754;
+        color: #fff;
+    }
+    .pag-btn--disabled {
+        border-color: #ced4da;
+        color: #ced4da;
+        cursor: default;
+        pointer-events: none;
+    }
+    .pag-counter {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #212529;
+        min-width: 60px;
+        text-align: center;
+        letter-spacing: 0.03em;
+    }
+</style>
 {% endblock %}

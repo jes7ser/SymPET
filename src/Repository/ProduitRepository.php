@@ -32,4 +32,54 @@ class ProduitRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+    public function buildFilterQuery(string $nom, string $categorie, string $prixMin, string $prixMax, string $promo = '', string $produitType = '')
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if ($nom != '') {
+            $qb->andWhere('p.nom LIKE :nom')
+               ->setParameter('nom', '%' . $nom . '%');
+        }
+
+        if ($categorie != '') {
+            $qb->andWhere('p.categorie = :categorie')
+               ->setParameter('categorie', $categorie);
+        }
+
+        if ($prixMin != '') {
+            $qb->andWhere('p.prix >= :prixMin')
+               ->setParameter('prixMin', $prixMin);
+        }
+
+        if ($prixMax != '') {
+            $qb->andWhere('p.prix <= :prixMax')
+               ->setParameter('prixMax', $prixMax);
+        }
+
+        if ($produitType != '') {
+            $qb->andWhere('p.produitType = :produitType')
+               ->setParameter('produitType', $produitType);
+        }
+
+        if ($promo == '1') {
+            $qb->andWhere('p.prix < 30');
+        }
+
+        $qb->orderBy('p.id', 'DESC');
+
+        return $qb;
+    }
+
+    public function getPrixMinMax(): array
+    {
+        $result = $this->createQueryBuilder('p')
+            ->select('MIN(p.prix) as min, MAX(p.prix) as max')
+            ->getQuery()
+            ->getSingleResult();
+
+        return [
+            'min' => (int) floor($result['min'] ?? 0),
+            'max' => (int) ceil($result['max'] ?? 0)
+        ];
+    }
 }

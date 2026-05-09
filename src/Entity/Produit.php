@@ -40,9 +40,22 @@ class Produit
     #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'produit')]
     private Collection $ligneCommandes;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $animalType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $produitType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'text')]
+    private ?string $imageUrl = null;
+
     public function __construct()
     {
         $this->ligneCommandes = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -74,14 +87,14 @@ class Produit
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImageUrl(): ?string
     {
-        return $this->image;
+        return $this->imageUrl;
     }
 
-    public function setImage(string $image): static
+    public function setImageUrl(string $imageUrl): static
     {
-        $this->image = $image;
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }
@@ -118,6 +131,42 @@ class Produit
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getAnimalType(): ?string
+    {
+        return $this->animalType;
+    }
+
+    public function setAnimalType(?string $animalType): static
+    {
+        $this->animalType = $animalType;
+
+        return $this;
+    }
+
+    public function getProduitType(): ?string
+    {
+        return $this->produitType;
+    }
+
+    public function setProduitType(?string $produitType): static
+    {
+        $this->produitType = $produitType;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

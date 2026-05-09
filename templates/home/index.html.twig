@@ -3,44 +3,122 @@
 {% block title %}SymPET - Accueil{% endblock %}
 
 {% block body %}
-    <div class="p-5 mb-4 bg-light rounded-3 border-bottom shadow-sm">
-        <div class="container py-5 text-center">
-            <h1 class="display-5 fw-bold">SymPET 🐾</h1>
-            <p class="fs-4 text-muted">Votre boutique en ligne pour tous vos animaux de compagnie.</p>
-            <hr class="my-4">
-            <p>Découvrez notre large gamme de nourriture et d'accessoires.</p>
-            <a class="btn btn-primary btn-lg" href="{{ path('app_user_vitrine') }}" role="button">Voir la boutique</a>
+    <!-- Hero Section -->
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light rounded-4 shadow-sm" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+        <div class="col-md-8 p-lg-5 mx-auto my-5">
+            <h1 class="display-3 fw-bold mb-3" style="color: #198754;">Bienvenue sur SymPET 🐾</h1>
+            <p class="lead fw-normal text-muted mb-4">La première boutique en ligne tunisienne dédiée au bonheur et à la santé de vos animaux de compagnie. Découvrez une sélection premium d'aliments et d'accessoires.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm" href="{{ path('app_user_vitrine') }}">Découvrir la boutique</a>
+                <a class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill fw-bold" href="{{ path('app_user_vitrine', {'promo': 1}) }}">Voir les promos</a>
+            </div>
         </div>
     </div>
 
-    <div class="container my-5">
-        <div class="row text-center mb-5">
-            <div class="col">
-                <h2 class="pb-2 border-bottom">Nos Services</h2>
-            </div>
+    <!-- Nos Catégories -->
+    <div class="container my-5 py-4">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Trouvez le meilleur pour...</h2>
+            <p class="text-muted">Sélectionnez la catégorie de votre compagnon</p>
         </div>
-        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-            <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
-                    <i class="bi bi-truck text-primary"></i>
-                </div>
-                <h3>Livraison Rapide</h3>
-                <p>Recevez vos commandes en moins de 48h partout en France.</p>
+        
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 text-center">
+            <div class="col">
+                <a href="{{ path('app_user_vitrine') }}?categorie=1" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 category-card transition-all">
+                        <div class="card-body p-4">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f436.svg" alt="Chien" style="width: 64px; height: 64px; margin-bottom: 15px;">
+                            <h5 class="text-dark fw-bold">Chiens</h5>
+                        </div>
+                    </div>
+                </a>
             </div>
-            <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
-                    <i class="bi bi-shield-check text-success"></i>
-                </div>
-                <h3>Paiement Sécurisé</h3>
-                <p>Nous utilisons des protocoles de sécurité avancés pour vos achats.</p>
+            <div class="col">
+                <a href="{{ path('app_user_vitrine') }}?categorie=2" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 category-card transition-all">
+                        <div class="card-body p-4">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f431.svg" alt="Chat" style="width: 64px; height: 64px; margin-bottom: 15px;">
+                            <h5 class="text-dark fw-bold">Chats</h5>
+                        </div>
+                    </div>
+                </a>
             </div>
-            <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex align-items-center justify-content-center fs-2 mb-3">
-                    <i class="bi bi-headset text-info"></i>
-                </div>
-                <h3>Support 24/7</h3>
-                <p>Notre équipe est disponible pour répondre à toutes vos questions.</p>
+            <div class="col">
+                <a href="{{ path('app_user_vitrine') }}?categorie=3" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 category-card transition-all">
+                        <div class="card-body p-4">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f426.svg" alt="Oiseau" style="width: 64px; height: 64px; margin-bottom: 15px;">
+                            <h5 class="text-dark fw-bold">Oiseaux</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col">
+                <a href="{{ path('app_user_vitrine') }}?categorie=4" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 category-card transition-all">
+                        <div class="card-body p-4">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f41f.svg" alt="Poisson" style="width: 64px; height: 64px; margin-bottom: 15px;">
+                            <h5 class="text-dark fw-bold">Poissons</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col">
+                <a href="{{ path('app_user_vitrine') }}?categorie=5" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 category-card transition-all">
+                        <div class="card-body p-4">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f439.svg" alt="Rongeur" style="width: 64px; height: 64px; margin-bottom: 15px;">
+                            <h5 class="text-dark fw-bold">Rongeurs</h5>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Nos Engagements -->
+    <div class="bg-dark text-white py-5 mt-5">
+        <div class="container my-4">
+            <div class="row text-center mb-5">
+                <div class="col">
+                    <h2 class="fw-bold">Pourquoi choisir SymPET ?</h2>
+                    <p class="text-secondary">Nos engagements pour vous et vos animaux</p>
+                </div>
+            </div>
+            <div class="row g-4 row-cols-1 row-cols-lg-3">
+                <div class="feature col text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle mb-3 shadow" style="width: 80px; height: 80px;">
+                        <i class="bi bi-truck fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold">Livraison Rapide</h4>
+                    <p class="text-secondary">Recevez vos commandes en moins de 48h partout en Tunisie, directement à votre porte.</p>
+                </div>
+                <div class="feature col text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-warning text-dark rounded-circle mb-3 shadow" style="width: 80px; height: 80px;">
+                        <i class="bi bi-star-fill fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold">Produits Premium</h4>
+                    <p class="text-secondary">Nous sélectionnons rigoureusement des marques reconnues pour la santé de vos animaux.</p>
+                </div>
+                <div class="feature col text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-info text-white rounded-circle mb-3 shadow" style="width: 80px; height: 80px;">
+                        <i class="bi bi-headset fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold">Support Dédié</h4>
+                    <p class="text-secondary">Notre équipe de passionnés est disponible 7j/7 pour vous conseiller et vous accompagner.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .category-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        }
+    </style>
 {% endblock %}
