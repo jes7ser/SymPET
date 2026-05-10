@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Produits - SymPet{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Gestion des Produits</h1>
+    <a href="{{ path('admin_product_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nouveau produit
+    </a>
+</div>
+
+<!-- Filtres -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher par nom..." value="{{ app.request.query.get('search') }}">
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="">Toutes les catégories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {{ app.request.query.get('category') == cat.id ? 'selected' : '' }}>{{ cat.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-secondary w-100">Filtrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Image</th>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Stock</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for produit in produits %}
+                    <tr>
+                        <td class="ps-4">
+                            <img src="{{ (produit.image starts with 'http') ? produit.image : asset('uploads/produits/' ~ produit.image) }}" alt="{{ produit.nom }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded shadow-sm">
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ produit.nom }}</div>
+                            <div class="d-flex gap-1 mb-1">
+                                {% if produit.isPromo %}
+                                    <span class="badge bg-success">-{{ produit.promotion }}%</span>
+                                {% endif %}
+                                {% if produit.isRupture %}
+                                    <span class="badge bg-danger">Rupture</span>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;">{{ produit.description }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ produit.categorie.nom }}</span>
+                        </td>
+                        <td class="fw-bold">
+                            {% if produit.isPromo %}
+                                <div class="text-decoration-line-through text-muted small">{{ produit.prix|number_format(3, ',', ' ') }} DT</div>
+                                <div class="text-success">{{ produit.prixFinal|number_format(3, ',', ' ') }} DT</div>
+                            {% else %}
+                                {{ produit.prix|number_format(3, ',', ' ') }} DT
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if produit.stock <= 5 %}
+                                <span class="text-danger fw-bold">{{ produit.stock }} (Bas !)</span>
+                            {% else %}
+                                {{ produit.stock }}
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{{ path('admin_product_edit', {'id': produit.id}) }}" class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" action="{{ path('admin_product_delete', {'id': produit.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Aucun produit trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

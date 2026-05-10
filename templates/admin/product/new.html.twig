@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Produit - SymPet{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex align-items-center mb-4">
+            <a href="{{ path('admin_product_index') }}" class="btn btn-link text-decoration-none p-0 me-3">
+                <i class="fas fa-arrow-left fa-lg"></i>
+            </a>
+            <h1 class="mb-0">Ajouter un produit</h1>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                {{ include('admin/product/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

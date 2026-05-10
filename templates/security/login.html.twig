@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - SymPet{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-4 fw-bold text-center">Connexion</h1>
+
+                <form method="post">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Email</label>
+                        <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPassword" class="form-label">Mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fa fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.getElementById('togglePassword').addEventListener('click', function (e) {
+                            const password = document.getElementById('inputPassword');
+                            const icon = document.getElementById('eyeIcon');
+                            if (password.type === 'password') {
+                                password.type = 'text';
+                                icon.classList.remove('fa-eye');
+                                icon.classList.add('fa-eye-slash');
+                            } else {
+                                password.type = 'password';
+                                icon.classList.remove('fa-eye-slash');
+                                icon.classList.add('fa-eye');
+                            }
+                        });
+                    </script>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="mb-3">
+                        <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none small">Mot de passe oublié ?</a>
+                    </div>
+
+                    <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">
+                        Se connecter
+                    </button>
+                    
+                    <div class="mt-4 text-center">
+                        <span class="text-muted small">Pas encore de compte ?</span>
+                        <a href="{{ path('app_register') }}" class="text-decoration-none small fw-bold">S'inscrire</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
