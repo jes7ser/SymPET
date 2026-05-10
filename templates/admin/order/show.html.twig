@@ -33,7 +33,7 @@
                             <tr>
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ (ligne.produit.image starts with 'http') ? ligne.produit.image : asset('uploads/produits/' ~ ligne.produit.image) }}" style="width: 40px; height: 40px; object-fit: cover;" class="rounded me-3">
+                                        <img src="{{ (ligne.produit.imageUrl starts with 'http') ? ligne.produit.imageUrl : asset('uploads/produits/' ~ ligne.produit.imageUrl) }}" style="width: 40px; height: 40px; object-fit: cover;" class="rounded me-3">
                                         <div>
                                             <div class="fw-bold">{{ ligne.produit.nom }}</div>
                                             <small class="text-muted">{{ ligne.produit.categorie.nom }}</small>

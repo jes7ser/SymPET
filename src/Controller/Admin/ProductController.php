@@ -56,7 +56,7 @@ class ProductController extends AbstractController
                         $this->getParameter('products_images_directory'),
                         $newFilename
                     );
-                    $produit->setImage($newFilename);
+                    $produit->setImageUrl($newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                 }
@@ -103,7 +103,7 @@ class ProductController extends AbstractController
                     );
                     
                     // Supprimer l'ancienne image si elle existe
-                    $oldImage = $produit->getImage();
+                    $oldImage = $produit->getImageUrl();
                     if ($oldImage && !str_starts_with($oldImage, 'http')) {
                         $oldPath = $this->getParameter('products_images_directory').'/'.$oldImage;
                         if (file_exists($oldPath)) {
@@ -111,7 +111,7 @@ class ProductController extends AbstractController
                         }
                     }
 
-                    $produit->setImage($newFilename);
+                    $produit->setImageUrl($newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                 }
@@ -141,7 +141,7 @@ class ProductController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->request->get('_token'))) {
             // Supprimer l'image du serveur
-            $image = $produit->getImage();
+            $image = $produit->getImageUrl();
             if ($image) {
                 $path = $this->getParameter('products_images_directory').'/'.$image;
                 if (file_exists($path)) {

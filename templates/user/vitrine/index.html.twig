@@ -110,7 +110,7 @@
                         <div class="card h-100 shadow-sm border-0 product-card">
                             <div class="position-relative">
                                 <span class="badge bg-success position-absolute top-0 start-0 m-2">{{ produit.categorie.nom }}</span>
-                                <img src="{% if produit.imageUrl %}{{ produit.imageUrl }}{% else %}{{ asset('uploads/produits/' ~ produit.image) }}{% endif %}" class="card-img-top" alt="{{ produit.nom }}" style="height: 180px; object-fit: cover;">
+                                <img src="{{ produit.imageUrl starts with 'http' ? produit.imageUrl : asset('uploads/produits/' ~ produit.imageUrl) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 180px; object-fit: cover;">
                             </div>
 
                             <div class="card-body d-flex flex-column p-3">

@@ -15,7 +15,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <div class="mb-4 text-center">
-                    <img src="{{ asset('uploads/produits/' ~ produit.image) }}" alt="{{ produit.nom }}" style="max-width: 200px;" class="img-thumbnail">
+                    <img src="{{ (produit.imageUrl starts with 'http') ? produit.imageUrl : asset('uploads/produits/' ~ produit.imageUrl) }}" alt="{{ produit.nom }}" style="max-width: 200px;" class="img-thumbnail">
                 </div>
                 {{ include('admin/product/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
             </div>

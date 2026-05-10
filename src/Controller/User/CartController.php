@@ -47,4 +47,11 @@ class CartController extends AbstractController
         
         return $this->redirectToRoute('app_cart_index');
     }
+    #[Route('/checkout', name: 'app_user_commande_new')]
+    public function checkout(): Response
+    {
+        // TODO: Implémenter la logique de création de commande
+        $this->addFlash('success', 'Page de validation de commande à implémenter.');
+        return $this->redirectToRoute('app_user_vitrine');
+    }
 }

@@ -21,7 +21,7 @@ class Produit
     #[ORM\Column]
     private ?int $stock = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -51,6 +51,15 @@ class Produit
 
     #[ORM\Column(type: 'text')]
     private ?string $imageUrl = null;
+
+    #[ORM\Column]
+    private bool $isPromo = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $promotion = null;
+
+    #[ORM\Column]
+    private bool $isRupture = false;
 
     public function __construct()
     {
@@ -169,6 +178,51 @@ class Produit
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function isPromo(): bool
+    {
+        return $this->isPromo;
+    }
+
+    public function setIsPromo(bool $isPromo): static
+    {
+        $this->isPromo = $isPromo;
+
+        return $this;
+    }
+
+    public function getPromotion(): ?int
+    {
+        return $this->promotion;
+    }
+
+    public function setPromotion(?int $promotion): static
+    {
+        $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    public function isRupture(): bool
+    {
+        return $this->isRupture;
+    }
+
+    public function setIsRupture(bool $isRupture): static
+    {
+        $this->isRupture = $isRupture;
+
+        return $this;
+    }
+
+    public function getPrixFinal(): float
+    {
+        if ($this->isPromo && $this->promotion > 0) {
+            return $this->prix * (1 - $this->promotion / 100);
+        }
+
+        return $this->prix;
     }
 
     /**

@@ -50,7 +50,7 @@
                 {% for produit in produits %}
                     <tr>
                         <td class="ps-4">
-                            <img src="{{ (produit.image starts with 'http') ? produit.image : asset('uploads/produits/' ~ produit.image) }}" alt="{{ produit.nom }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded shadow-sm">
+                            <img src="{{ (produit.imageUrl starts with 'http') ? produit.imageUrl : asset('uploads/produits/' ~ produit.imageUrl) }}" alt="{{ produit.nom }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded shadow-sm">
                         </td>
                         <td>
                             <div class="fw-bold">{{ produit.nom }}</div>

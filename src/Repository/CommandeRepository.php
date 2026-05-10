@@ -16,28 +16,22 @@ class CommandeRepository extends ServiceEntityRepository
         parent::__construct($registry, Commande::class);
     }
 
-    //    /**
-    //     * @return Commande[] Returns an array of Commande objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getTotalRevenue(): float
+    {
+        return (float) $this->createQueryBuilder('c')
+            ->select('SUM(l.quantite * l.prixUnitaire)')
+            ->join('c.ligneCommandes', 'l')
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0;
+    }
 
-    //    public function findOneBySomeField($value): ?Commande
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getMonthlyOrders(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('SUBSTRING(c.dateCreation, 1, 7) AS month, COUNT(c.id) AS count')
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
