@@ -69,9 +69,22 @@ class Produit
     #[ORM\Column]
     private bool $isRupture = false;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $imageUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $animalType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $produitType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->ligneCommandes = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -219,5 +232,49 @@ class Produit
             return $this->prix * (1 - $this->promotion / 100);
         }
         return $this->prix;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): static
+    {
+        $this->imageUrl = $imageUrl;
+        return $this;
+    }
+
+    public function getAnimalType(): ?string
+    {
+        return $this->animalType;
+    }
+
+    public function setAnimalType(?string $animalType): static
+    {
+        $this->animalType = $animalType;
+        return $this;
+    }
+
+    public function getProduitType(): ?string
+    {
+        return $this->produitType;
+    }
+
+    public function setProduitType(?string $produitType): static
+    {
+        $this->produitType = $produitType;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 }
