@@ -85,7 +85,11 @@
                             <span class="h5 fw-bold mb-0">Total</span>
                             <span class="h5 fw-bold text-success mb-0">{{ total|number_format(3, ',', ' ') }} DT</span>
                         </div>
-                        <button class="btn btn-success btn-lg w-100 fw-bold">Passer la commande</button>
+                        {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('app_user_commande_new') }}" class="btn btn-success btn-lg w-100 fw-bold">Valider et commander</a>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-warning btn-lg w-100 fw-bold">Connectez-vous pour commander</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
