@@ -4,81 +4,173 @@
 
 SymPET est une application web e-commerce dédiée à la vente en ligne de nourriture et d'accessoires pour animaux de compagnie (chiens, chats, oiseaux, rongeurs, poissons). Ce projet repose sur Symfony 6/7.
 
+---
+
 ## 👥 Auteurs
-- **Étudiant 1** : Skander (Développement Front-Office, Panier, Peuplement API, UI/UX)
-- **Étudiant 2** : Jesser (Développement Back-Office, Sécurité, Authentification)
+
+| Rôle | Étudiant | Responsabilités |
+|---|---|---|
+| **Front-Office / User** | **Skander** | Vitrine, Panier, Commande, Paiement Stripe, Historique, UI/UX |
+| **Back-Office / Admin** | **Jesser** | Dashboard, CRUD Produits/Catégories/Commandes, Sécurité, Auth |
 
 ---
 
-## 🚀 Nouvelles Fonctionnalités Développées (Mise à jour)
+## 🚀 Fonctionnalités
 
-### 🛒 Espace Client (Vitrine & Accueil)
-- **Page d'Accueil Premium** : Design repensé (Hero section, animations au survol) intégrant des illustrations vectorielles (Twemoji) pour chaque catégorie d'animal.
-- **Catalogue Dynamique** : Affichage d'une Boutique complète alimentée par de véritables données (noms, prix réels, images hébergées) extraites de l'API de *Zanimo.tn*.
-- **Filtres Avancés** : 
-  - Recherche par nom (texte libre)
-  - Filtres par catégorie (Chien, Chat, Oiseau...)
-  - Filtres par plage de prix avec sliders
-  - **NOUVEAU** : Filtre par "Type de produit" (Nourriture ou Accessoire).
-- **Pagination Optimisée** : Implémentation centralisée (`PaginationService`) utilisant `KnpPaginator`, avec une interface utilisateur de pagination sur mesure (boutons circulaires, compteurs "X sur Y produits").
-- **Architecture Propre** : Séparation stricte MVC et refactoring des contrôleurs avec l'injection de services dédiés (`ProduitFilterService`).
+### � Authentification & Sécurité
+- Inscription avec confirmation par email (`isEnabled`)
+- Connexion avec redirection selon le rôle : **Admin → Dashboard**, **Client → Accueil**
+- Flash message de bienvenue après connexion
+- `UserChecker` : bloque les comptes non activés
+- Protection des routes via `access_control` dans `security.yaml`
 
-### 🛍️ Gestion du Panier (Session)
-- **Service dédié (`CartService`)** : Logique métier entièrement encapsulée interagissant avec la session Symfony.
-- **Fonctionnalités complètes** : 
-  - Ajout de produits depuis la vitrine et la page détail.
-  - Consultation d'un tableau récapitulatif clair.
-  - Modification des quantités (boutons `+` / `-`).
-  - Suppression de produits.
-  - Calcul dynamique du sous-total, de la livraison, et du montant global.
-- **Indicateur Temps Réel** : Badge rouge dynamique dans la barre de navigation indiquant le nombre total d'articles présents dans le panier.
+### 🛒 Espace Client (Vitrine)
+- **Catalogue dynamique** : 50 produits réels avec images de *Zanimo.tn*
+- **Filtres avancés** : nom, catégorie, plage de prix (sliders), type (Nourriture/Accessoire), promos
+- **Pagination** : `KnpPaginator` via `PaginationService` — affichage "X–Y sur Z produits"
+- **Page détail produit** : image, description, prix, badge promo, stock
+- **Badges** : promotion (`-X%`), rupture de stock
 
-### 🗄️ Base de Données & Peuplement
-- Entité `Produit` adaptée pour stocker les URL d'images externes (`imageUrl`) et le type de produit.
-- **Script d'injection de données réelles (`populate_db.py`)** : Remplacement des anciennes "Fixtures" (données factices) par un script Python autonome qui se connecte à MySQL et injecte **50 produits réels premium** récupérés de *Zanimo.tn*.
+### 🛍️ Panier (Session)
+- Ajout / suppression / modification de quantité
+- Bouton `-` masqué quand quantité = 1 (apparaît dès qu'on clique `+`)
+- Badge rouge en temps réel dans la navbar
+- Bouton **"Valider et commander"** (vert si connecté, jaune sinon → redirige vers login)
+
+### � Commande & Paiement *(Skander)*
+- **Formulaire de commande** en 2 colonnes :
+  - Adresse de livraison (nom, prénom, email pré-remplis, téléphone, rue, gouvernorat, code postal)
+  - 24 gouvernorats tunisiens en select
+  - Mode de paiement : **Paiement à la livraison** ou **Paiement par carte (Stripe)**
+  - Champs carte Stripe affichés dynamiquement
+- **Validation complète** :
+  - Côté client : HTML5 (`pattern`, `minlength`, `maxlength`) + Bootstrap `was-validated`
+  - Côté serveur : `preg_match` PHP (téléphone 8 chiffres, code postal 4 chiffres, adresse min 5 chars, gouvernorat dans liste)
+  - Saisie auto-filtrée : téléphone et code postal acceptent uniquement des chiffres
+- **Intégration Stripe Checkout** : redirection vers page de paiement sécurisée Stripe
+- **Paiement à la livraison** : enregistrement direct en base avec statut `en_attente`
+- **Email de confirmation** automatique via Symfony Mailer (HTML avec tableau des articles)
+- **Page de succès** : numéro de commande, récapitulatif articles, adresse, mode de paiement
+
+### � Historique des Commandes *(Skander)*
+- Liste de toutes les commandes de l'utilisateur connecté (triées par date décroissante)
+- Tableau Bootstrap avec badges colorés : 🟢 Livrée / 🟠 En attente / 🔴 Annulée
+- Bouton **"Voir détail"** par commande
+- **Page détail** : articles, quantités, prix unitaires, adresse de livraison, mode de paiement
+- Sécurité : vérification que la commande appartient à l'utilisateur (403 sinon)
+- Accessible depuis le menu profil (dropdown navbar)
+
+### 🏠 Back-Office Admin *(Jesser)*
+- Dashboard avec statistiques : total clients, revenus, meilleur produit, graphique mensuel
+- CRUD complet : Produits, Catégories, Commandes, Utilisateurs, Avis
+- Gestion des images produits (upload local ou URL externe)
+- Champs promo : `isPromo`, `promotion` (%), `isRupture`
 
 ---
 
-## 💻 Pré-requis Techniques
-- **PHP** 8.2 ou supérieur
-- **Composer**
-- Serveur local (Laragon, XAMPP, WAMP...)
-- **Python 3** (avec `pymysql` et `python-dotenv`) pour injecter les vraies données.
+## 🗄️ Modèle de Données
+
+```
+User ──< Commande ──< LigneCommande >── Produit >── Categorie
+User ──< Avis >── Produit
+Commande : id, dateCreation, statut, total, adresseLivraison,
+           telephone, gouvernorat, codePostal, modePaiement
+```
 
 ---
 
-## ⚙️ Installation Rapide (Pour le Jury / Enseignants)
+## 💻 Pré-requis
 
-Suivez ces étapes pour tester le projet localement :
+- PHP 8.2+
+- Composer
+- MySQL 8+
+- Serveur local (Laragon, XAMPP...)
+- Python 3 + `pymysql` + `python-dotenv` (pour peupler la BDD)
+- Compte Stripe (pour tester le paiement par carte)
 
-**1. Cloner le dépôt et installer les dépendances**
+---
+
+## ⚙️ Installation
+
+**1. Cloner et installer**
 ```bash
-git clone <VOTRE_LIEN_GITHUB_ICI>
+git clone https://github.com/jes7ser/SymPET.git
 cd SymPET
 composer install
 ```
 
-**2. Configuration de la base de données**
-Copiez le fichier `.env` vers `.env.local` et modifiez la variable `DATABASE_URL` pour correspondre à vos identifiants MySQL locaux.
+**2. Configurer la base de données**
+
+Copier `.env` vers `.env.local` et modifier `DATABASE_URL` :
 ```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-**3. Charger les VRAIES données (Catalogue Zanimo)**
-*Attention, ce script vide les tables actuelles et insère un catalogue e-commerce cohérent avec des vraies photos.*
+**3. Peupler avec les vraies données**
 ```bash
-# Nécessite Python installé sur la machine
 pip install pymysql python-dotenv
 python populate_db.py
 ```
 
-**4. Lancer le serveur local PHP**
+**4. Créer un compte admin**
 ```bash
+php create_admin.php
+```
+
+**5. Configurer Stripe** (optionnel, pour tester le paiement carte)
+
+Dans `.env.local` :
+```
+STRIPE_SECRET_KEY=sk_test_votre_cle
+STRIPE_PUBLIC_KEY=pk_test_votre_cle
+```
+
+**6. Lancer le serveur**
+```bash
+symfony server:start
+# ou
 php -S localhost:8000 -t public
 ```
 
-🎯 **L'application est maintenant accessible sur : `http://localhost:8000`**
+🎯 **Accessible sur : `http://localhost:8000`**
 
 ---
-*Fin du document.*
+
+## 🧪 Comptes de test
+
+| Rôle | Email | Mot de passe |
+|---|---|---|
+| Admin | admin@sympet.tn | *(défini via create_admin.php)* |
+| Client | khalil@gmail.com | *(votre mot de passe)* |
+
+---
+
+## 📁 Structure des fichiers clés
+
+```
+src/
+├── Controller/
+│   ├── Admin/          ← CRUD back-office (Jesser)
+│   └── User/
+│       ├── VitrineController.php    ← Catalogue + filtres
+│       ├── CartController.php       ← Panier session
+│       └── CommandeController.php   ← Commande + Stripe + Historique (Skander)
+├── Entity/             ← User, Produit, Categorie, Commande, LigneCommande, Avis
+├── Repository/         ← Requêtes Doctrine
+├── Security/           ← LoginSuccessHandler, UserChecker
+└── Service/
+    ├── CartService.php          ← Logique panier session
+    ├── ProduitFilterService.php ← Filtrage + pagination
+    └── PaginationService.php    ← KnpPaginator centralisé
+templates/
+├── admin/              ← Vues back-office
+└── user/
+    ├── vitrine/        ← Catalogue, détail produit
+    ├── cart/           ← Panier
+    └── commande/       ← Formulaire, succès, historique, détail (Skander)
+```
+
+---
+
+*Projet L2 DSI — SymPET © 2026*

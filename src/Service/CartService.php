@@ -101,4 +101,12 @@ class CartService
         
         return $total;
     }
+
+    /**
+     * Vide complètement le panier de la session
+     */
+    public function clear(): void
+    {
+        $this->requestStack->getSession()->set('panier', []);
+    }
 }

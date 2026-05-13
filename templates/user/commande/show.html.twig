@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande #{{ commande.id }} — SymPET{% endblock %}
+
+{% block body %}
+<div style="background-color: #f4f6f9; min-height: 100vh; padding: 40px 0;">
+<div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #1a2e4a;">
+            <i class="bi bi-receipt me-2"></i>Commande <span class="text-success">#{{ commande.id }}</span>
+        </h2>
+        <a href="{{ path('app_user_commande_historique') }}" class="btn btn-outline-secondary" style="border-radius: 8px;">
+            <i class="bi bi-arrow-left me-1"></i>Retour à mes commandes
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        {# Colonne gauche : articles #}
+        <div class="col-lg-8">
+            <div class="card border-0 mb-4" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4" style="color: #1a2e4a;">
+                        <i class="bi bi-bag me-2 text-success"></i>Articles commandés
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Produit</th>
+                                    <th class="text-center">Quantité</th>
+                                    <th class="text-center">Prix unitaire</th>
+                                    <th class="text-end">Total ligne</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ligne in commande.ligneCommandes %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if ligne.produit.imageUrl starts with 'http' %}
+                                                <img src="{{ ligne.produit.imageUrl }}" alt="{{ ligne.produit.nom }}"
+                                                     style="width:45px;height:45px;object-fit:cover;border-radius:8px;" class="me-3">
+                                            {% else %}
+                                                <img src="{{ asset('uploads/produits/' ~ ligne.produit.imageUrl) }}" alt="{{ ligne.produit.nom }}"
+                                                     style="width:45px;height:45px;object-fit:cover;border-radius:8px;" class="me-3">
+                                            {% endif %}
+                                            <span class="fw-semibold">{{ ligne.produit.nom }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{ ligne.quantite }}</td>
+                                    <td class="text-center">{{ ligne.prixUnitaire|number_format(3, ',', ' ') }} DT</td>
+                                    <td class="text-end fw-bold">{{ (ligne.prixUnitaire * ligne.quantite)|number_format(3, ',', ' ') }} DT</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold">Livraison</td>
+                                    <td class="text-end text-success fw-bold">Gratuite</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold fs-5">Total</td>
+                                    <td class="text-end fw-bold text-danger fs-5">{{ commande.total|number_format(3, ',', ' ') }} DT</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Colonne droite : infos commande #}
+        <div class="col-lg-4">
+
+            {# Statut #}
+            <div class="card border-0 mb-4" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #1a2e4a;">Statut de la commande</h6>
+                    {% if commande.statut == 'livree' %}
+                        <span class="badge bg-success fs-6 px-3 py-2 w-100 text-center">
+                            <i class="bi bi-check-circle me-1"></i>Livrée
+                        </span>
+                    {% elseif commande.statut == 'en_attente' %}
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2 w-100 text-center">
+                            <i class="bi bi-hourglass-split me-1"></i>En attente
+                        </span>
+                    {% elseif commande.statut == 'annulee' %}
+                        <span class="badge bg-danger fs-6 px-3 py-2 w-100 text-center">
+                            <i class="bi bi-x-circle me-1"></i>Annulée
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary fs-6 px-3 py-2 w-100 text-center">{{ commande.statut }}</span>
+                    {% endif %}
+                    <p class="text-muted small mt-2 mb-0 text-center">
+                        Passée le {{ commande.dateCreation|date('d/m/Y') }}
+                    </p>
+                </div>
+            </div>
+
+            {# Adresse de livraison #}
+            <div class="card border-0 mb-4" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #1a2e4a;">
+                        <i class="bi bi-geo-alt me-2 text-success"></i>Adresse de livraison
+                    </h6>
+                    <p class="mb-1">{{ commande.adresseLivraison }}</p>
+                    <p class="mb-1">{{ commande.codePostal }} — {{ commande.gouvernorat }}</p>
+                    <p class="mb-0 text-muted">
+                        <i class="bi bi-telephone me-1"></i>{{ commande.telephone }}
+                    </p>
+                </div>
+            </div>
+
+            {# Mode de paiement #}
+            <div class="card border-0" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #1a2e4a;">
+                        <i class="bi bi-credit-card me-2 text-success"></i>Mode de paiement
+                    </h6>
+                    {% if commande.modePaiement == 'stripe' %}
+                        <span class="badge bg-primary px-3 py-2">
+                            <i class="bi bi-credit-card-2-front me-1"></i>Paiement par carte
+                        </span>
+                    {% else %}
+                        <span class="badge bg-success px-3 py-2">
+                            <i class="bi bi-truck me-1"></i>Paiement à la livraison
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

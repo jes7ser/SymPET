@@ -34,4 +34,17 @@ class CommandeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Retourne toutes les commandes d'un utilisateur, triées par date décroissante
+     */
+    public function findByUtilisateur($user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.utilisateur = :user')
+            ->setParameter('user', $user)
+            ->orderBy('c.dateCreation', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
