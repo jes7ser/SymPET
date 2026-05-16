@@ -4,11 +4,19 @@ namespace App\DataFixtures;
 
 use App\Entity\Categorie;
 use App\Entity\Produit;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
     private const CATALOG = [
         "Chien" => [
             ["DC ADULT SENSITIVE AGNEAU RIZ 20 Kg", "Croquettes premium pour chiens adultes sensibles, formule agneau et riz.", 390.0, "Nourriture", "https://assets.zanimo.tn/produits/4014355330527.jpg"],
