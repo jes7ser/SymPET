@@ -282,6 +282,14 @@ class CommandeController extends AbstractController
             $ligne->setQuantite($item['quantite']);
             $ligne->setPrixUnitaire($item['produit']->getPrix());
             $em->persist($ligne);
+
+            // Déduction immédiate du stock lors de la mise "En attente" de la commande
+            $produit = $item['produit'];
+            $nouveauStock = max(0, $produit->getStock() - $item['quantite']);
+            $produit->setStock($nouveauStock);
+            if ($nouveauStock === 0) {
+                $produit->setIsRupture(true);
+            }
         }
 
         $em->flush();
