@@ -25,7 +25,7 @@ class ProductController extends AbstractController
         $catId = $request->query->get('category');
 
         if ($search || $catId) {
-            $products = $produitRepository->findBySearch($search, $catId);
+            $products = $produitRepository->search($search, $catId);
         } else {
             $products = $produitRepository->findAll();
         }
@@ -44,6 +44,29 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Règle métier : promo et rupture ne peuvent pas coexister
+            if ($produit->isPromo() && $produit->isRupture()) {
+                $this->addFlash('error', 'Un produit ne peut pas être en promotion et en rupture de stock en même temps.');
+                return $this->render('admin/product/new.html.twig', [
+                    'produit' => $produit,
+                    'form' => $form,
+                ]);
+            }
+
+            // Règle métier : si promo activée, le pourcentage est obligatoire
+            if ($produit->isPromo() && (!$produit->getPromotion() || $produit->getPromotion() < 1)) {
+                $this->addFlash('error', 'Veuillez indiquer un pourcentage de promotion valide (entre 1% et 100%).');
+                return $this->render('admin/product/new.html.twig', [
+                    'produit' => $produit,
+                    'form' => $form,
+                ]);
+            }
+
+            // Si pas en promo, remettre le pourcentage à zéro
+            if (!$produit->isPromo()) {
+                $produit->setPromotion(null);
+            }
+
             $imageFile = $form->get('imageFile')->getData();
 
             if ($imageFile) {
@@ -89,6 +112,29 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Règle métier : promo et rupture ne peuvent pas coexister
+            if ($produit->isPromo() && $produit->isRupture()) {
+                $this->addFlash('error', 'Un produit ne peut pas être en promotion et en rupture de stock en même temps.');
+                return $this->render('admin/product/edit.html.twig', [
+                    'produit' => $produit,
+                    'form' => $form,
+                ]);
+            }
+
+            // Règle métier : si promo activée, le pourcentage est obligatoire
+            if ($produit->isPromo() && (!$produit->getPromotion() || $produit->getPromotion() < 1)) {
+                $this->addFlash('error', 'Veuillez indiquer un pourcentage de promotion valide (entre 1% et 100%).');
+                return $this->render('admin/product/edit.html.twig', [
+                    'produit' => $produit,
+                    'form' => $form,
+                ]);
+            }
+
+            // Si pas en promo, remettre le pourcentage à zéro
+            if (!$produit->isPromo()) {
+                $produit->setPromotion(null);
+            }
+
             $imageFile = $form->get('imageFile')->getData();
 
             if ($imageFile) {

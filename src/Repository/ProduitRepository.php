@@ -62,7 +62,7 @@ class ProduitRepository extends ServiceEntityRepository
         }
 
         if ($promo == '1') {
-            $qb->andWhere('p.prix < 30');
+            $qb->andWhere('p.isPromo = true');
         }
 
         $qb->orderBy('p.id', 'DESC');

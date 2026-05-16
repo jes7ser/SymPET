@@ -36,7 +36,18 @@
                 Catégorie : <span class="badge bg-secondary">{{ produit.categorie.nom|default('Aucune') }}</span>
             </p>
 
-            <h2 class="text-primary mb-2">{{ produit.prix|number_format(3, ',', ' ') }} DT</h2>
+            {% if produit.isPromo %}
+                <div class="mb-2">
+                    <span class="badge bg-danger fs-6 me-2">🔥 Promo -{{ produit.promotion }}%</span>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted text-decoration-line-through me-2 fs-5">{{ produit.prix|number_format(3, ',', ' ') }} DT</span>
+                    <span class="text-danger fw-bold display-6">{{ produit.prixFinal|number_format(3, ',', ' ') }} DT</span>
+                </div>
+            {% else %}
+                <h2 class="text-primary mb-3">{{ produit.prix|number_format(3, ',', ' ') }} DT</h2>
+            {% endif %}
+
             
             <div class="mb-4">
                 {% set avgNote = produit.noteMoyenne %}

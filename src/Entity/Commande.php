@@ -29,7 +29,7 @@ class Commande
     /**
      * @var Collection<int, LigneCommande>
      */
-    #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'commande')]
+    #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'commande', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $ligneCommandes;
 
     // Champs ajoutés pour la livraison et le paiement

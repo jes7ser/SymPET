@@ -50,28 +50,30 @@ class OrderController extends AbstractController
             $oldStatus = $commande->getStatut();
             $commande->setStatut($newStatus);
 
-            // Déduction du stock si la commande passe à "Complétée"
-            if ($newStatus === 'Complétée' && $oldStatus !== 'Complétée') {
+            $deductedStatuses = ['En attente', 'En cours', 'Complétée'];
+            
+            $wasDeducted = in_array($oldStatus, $deductedStatuses);
+            $isDeducted = in_array($newStatus, $deductedStatuses);
+
+            // Si on passe d'un statut non déduit à un statut déduit -> on déduit le stock
+            if (!$wasDeducted && $isDeducted) {
                 foreach ($commande->getLigneCommandes() as $ligne) {
                     $produit = $ligne->getProduit();
                     if ($produit) {
                         $newStock = $produit->getStock() - $ligne->getQuantite();
-                        $produit->setStock(max(0, $newStock)); // Empêche le stock négatif
-                        
-                        // Si le stock tombe à zéro, marquer en rupture
+                        $produit->setStock(max(0, $newStock));
                         if ($produit->getStock() === 0) {
                             $produit->setIsRupture(true);
                         }
                     }
                 }
             } 
-            // Restauration du stock si la commande quitte le statut "Complétée"
-            elseif ($oldStatus === 'Complétée' && $newStatus !== 'Complétée') {
+            // Si on passe d'un statut déduit à un statut non déduit (ex: Annulée) -> on restaure le stock
+            elseif ($wasDeducted && !$isDeducted) {
                 foreach ($commande->getLigneCommandes() as $ligne) {
                     $produit = $ligne->getProduit();
                     if ($produit) {
                         $produit->setStock($produit->getStock() + $ligne->getQuantite());
-                        
                         if ($produit->getStock() > 0) {
                             $produit->setIsRupture(false);
                         }
@@ -84,5 +86,31 @@ class OrderController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_order_show', ['id' => $commande->getId()]);
+    }
+
+    #[Route('/{id}/delete', name: 'admin_order_delete', methods: ['POST'])]
+    public function delete(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $commande->getId(), $request->request->get('_token'))) {
+            // Restore stock if the order was in a deducted status
+            $deductedStatuses = ['En attente', 'En cours', 'Complétée'];
+            if (in_array($commande->getStatut(), $deductedStatuses)) {
+                foreach ($commande->getLigneCommandes() as $ligne) {
+                    $produit = $ligne->getProduit();
+                    if ($produit) {
+                        $produit->setStock($produit->getStock() + $ligne->getQuantite());
+                        if ($produit->getStock() > 0) {
+                            $produit->setIsRupture(false);
+                        }
+                    }
+                }
+            }
+
+            $entityManager->remove($commande);
+            $entityManager->flush();
+            $this->addFlash('success', 'La commande a été supprimée avec succès.');
+        }
+
+        return $this->redirectToRoute('admin_order_index');
     }
 }
