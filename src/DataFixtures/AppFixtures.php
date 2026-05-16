@@ -109,6 +109,51 @@ class AppFixtures extends Fixture
             }
         }
 
+        // --- IMPORTATION DES ANCIENS UTILISATEURS ---
+        
+        $oldUsers = [
+            ['skanderfezzani@gmail.com', '["ROLE_USER"]', '', 'Fezzani', 'Skander'],
+            ['admin@sympet.com', '["ROLE_ADMIN"]', '$2y$13$C7OsI0MvFbaRKSK7YDN6A.LP1M0Ld.Dp3BUZ908T0.dCKW2AYJvi6', 'Admin', 'Super'],
+            ['marie.lacombe@baudry.fr', '["ROLE_USER"]', '$2y$13$LcPcCc32sUJzfKLGVkfV4.9obPj9SGX0SeuHqHfuRp7FhIQ6aOuQy', 'Lacombe', 'Marie'],
+            ['begue.benoit@tele2.fr', '["ROLE_USER"]', '$2y$13$pKxj5YStAqvfXiwLC2CK7.zy1xy3aI7OwavnWuXflR1bCjwR4Om7u', 'Bègue', 'Benoît'],
+            ['dmuller@orange.fr', '["ROLE_USER"]', '$2y$13$4y6tUqO80Rg09ByD24QLFOkvtx3pXhRuCOzpygst4DFLlG7vg2BTW', 'Muller', 'D.'],
+            ['deschamps.jacques@orange.fr', '["ROLE_USER"]', '$2y$13$wBLD3TSepUTQDBwYZKmbsOEB.41C4584nMU2ukf0mNcSNbQKT/6BW', 'Deschamps', 'Jacques'],
+            ['valentine31@laposte.net', '["ROLE_USER"]', '$2y$13$bOSGBCPzE4TbNmPCHiMBT.09AuthQ2NKUOGur.7spKZyp5lIF7HWC', 'Valentine', '31'],
+            ['nmary@hotmail.fr', '["ROLE_USER"]', '$2y$13$HhabmOTbXnhd0aVVVSt0V.Js454TjyuhlD66QB3ksBHKySk5qsngq', 'Mary', 'N.'],
+            ['baudry.frederic@free.fr', '["ROLE_USER"]', '$2y$13$vAoXmkwbgbebJxnfHUGPiOsKGfxzw8dXXkfkB9JARoiKy//69Uzna', 'Baudry', 'Frédéric'],
+            ['suzanne.marty@yahoo.fr', '["ROLE_USER"]', '$2y$13$i2ITFJpgW/PBk3xtObSaiea0v7C.Qw42QTrAFRV9IgDE214fi81aS', 'Marty', 'Suzanne'],
+            ['hguillou@wanadoo.fr', '["ROLE_USER"]', '$2y$13$1d/O6xRc9s9MN7Qbk8J4SuJ1wzkH6M9eKNXwM4PSMCZ5eydwEhPj.', 'Guillou', 'H.'],
+            ['sophie66@parent.com', '["ROLE_USER"]', '$2y$13$4.6DejyDm8SVMGMUTvMvI..dJaMHjHSHz0FBuePhyJezvkOsgf8M6', 'Parent', 'Sophie'],
+        ];
+
+        foreach ($oldUsers as $data) {
+            $user = new User();
+            $user->setEmail($data[0]);
+            $user->setRoles(json_decode($data[1]));
+            
+            // Si le hash est vide, on en génère un nouveau (mot de passe: skander)
+            if (empty($data[2])) {
+                $user->setPassword($this->passwordHasher->hashPassword($user, 'skander'));
+            } else {
+                $user->setPassword($data[2]);
+            }
+            
+            $user->setNom($data[3]);
+            $user->setPrenom($data[4]);
+            $user->setIsEnabled(true);
+            $manager->persist($user);
+        }
+
+        // On garde aussi l'admin de secours facile
+        $admin = new User();
+        $admin->setEmail('admin@sympet.tn');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setIsEnabled(true);
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin'));
+        $admin->setNom('Admin');
+        $admin->setPrenom('System');
+        $manager->persist($admin);
+
         $manager->flush();
     }
 }
