@@ -36,7 +36,7 @@ class ResetPasswordController extends AbstractController
 
                 // Send email
                 $mail = (new Email())
-                    ->from('no-reply@sympet.com')
+                    ->from('jesserjbeli49@gmail.com')
                     ->to($user->getEmail())
                     ->subject('Réinitialisation de votre mot de passe')
                     ->html($this->renderView('reset_password/email.html.twig', [
@@ -44,6 +44,7 @@ class ResetPasswordController extends AbstractController
                     ]));
 
                 $mailer->send($mail);
+
             }
 
             $this->addFlash('success', 'Si votre email existe, un lien de réinitialisation vous a été envoyé.');

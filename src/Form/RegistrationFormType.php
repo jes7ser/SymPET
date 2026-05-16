@@ -25,6 +25,7 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le prénom est obligatoire']),
                     new Length(['min' => 2, 'max' => 100, 'minMessage' => 'Le prénom doit faire au moins {{ limit }} caractères']),
+                    new Regex(['pattern' => '/^[a-zA-ZÀ-ÿ\s\-\']+$/', 'message' => 'Le prénom ne doit contenir que des lettres']),
                 ],
             ])
             ->add('nom', TextType::class, [
@@ -33,8 +34,10 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le nom est obligatoire']),
                     new Length(['min' => 2, 'max' => 100, 'minMessage' => 'Le nom doit faire au moins {{ limit }} caractères']),
+                    new Regex(['pattern' => '/^[a-zA-ZÀ-ÿ\s\-\']+$/', 'message' => 'Le nom ne doit contenir que des lettres']),
                 ],
             ])
+
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'votre@email.com'],
@@ -49,12 +52,14 @@ class RegistrationFormType extends AbstractType
                 'attr' => ['autocomplete' => 'new-password'],
                 'first_options'  => [
                     'label' => 'Mot de passe',
-                    'attr' => ['class' => 'form-control', 'placeholder' => 'Minimum 8 caractères (Maj/Min/Chiffre/Spécial)'],
+                    'attr' => ['class' => 'form-control', 'placeholder' => '••••••••'],
+                    'help' => 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&).',
                 ],
                 'second_options' => [
                     'label' => 'Confirmer le mot de passe',
-                    'attr' => ['class' => 'form-control', 'placeholder' => 'Répétez le mot de passe'],
+                    'attr' => ['class' => 'form-control', 'placeholder' => '••••••••'],
                 ],
+
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
                 'constraints' => [
                     new NotBlank([

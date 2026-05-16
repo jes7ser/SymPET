@@ -29,6 +29,16 @@
                 background-color: #5b4bc4;
                 border-color: #5b4bc4;
             }
+            .form-text {
+                font-size: 0.8rem;
+                color: #6c757d;
+                margin-top: 0.25rem;
+                font-style: italic;
+            }
+            .invalid-feedback {
+                font-weight: 600;
+            }
+
         </style>
 
         {% block stylesheets %}
@@ -136,8 +146,9 @@
 
         <footer class="mt-5 py-4 bg-white border-top">
             <div class="container text-center text-muted">
-                <p>&copy; {{ "now"|date("Y") }} SymPet - Atelier Framework Serveur</p>
+                <p>&copy; {{ "now"|date("Y") }} SymPet</p>
             </div>
         </footer>
+
     </body>
 </html>
