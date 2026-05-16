@@ -50,6 +50,16 @@
                         <i class="fas fa-sign-in-alt me-2"></i> Se connecter
                     </button>
                     
+                    <div class="d-flex align-items-center my-4">
+                        <hr class="flex-grow-1">
+                        <span class="mx-3 text-muted small">OU</span>
+                        <hr class="flex-grow-1">
+                    </div>
+
+                    <a href="{{ path('connect_google_start') }}" class="btn btn-outline-dark w-100 py-2 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="20" class="me-2">
+                        Continuer avec Google
+                    </a>
                     <div class="mt-4 text-center">
                         <span class="text-muted small">Vous n'avez pas de compte ?</span>
                         <a href="{{ path('app_register') }}" class="text-decoration-none small fw-bold text-primary">Créer un compte</a>

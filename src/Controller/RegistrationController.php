@@ -18,8 +18,8 @@ class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
     public function register(
-        Request $request, 
-        UserPasswordHasherInterface $userPasswordHasher, 
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
         MailerInterface $mailer
     ): Response {
@@ -62,7 +62,11 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-
+        if ($form->isSubmitted() && !$form->isValid()) {
+            foreach ($form->getErrors(true) as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
+        }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),

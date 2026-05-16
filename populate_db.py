@@ -112,10 +112,13 @@ def main():
                 cat_id = cat_ids[animal]
                 for nom, desc, prix, p_type, img in products:
                     stock = random.randint(10, 100)
-                    all_data.append((nom, desc, prix, stock, img, img, animal, p_type, now, cat_id))
+                    # (nom, desc, prix, stock, image, image_url, animal_type, produit_type, created_at, is_promo, promotion, is_rupture, cat_id)
+                    all_data.append((nom, desc, prix, stock, img, img, animal, p_type, now, 0, 0, 0, cat_id))
 
-            sql = """INSERT INTO produit (nom, description, prix, stock, image, image_url, animal_type, produit_type, created_at, categorie_id) 
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+
+            sql = """INSERT INTO produit (nom, description, prix, stock, image, image_url, animal_type, produit_type, created_at, is_promo, promotion, is_rupture, categorie_id) 
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+
             cursor.executemany(sql, all_data)
             conn.commit()
             print(f"SUCCÈS : {len(all_data)} produits insérés avec images réelles de Zanimo.tn !")

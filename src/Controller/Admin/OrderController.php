@@ -47,7 +47,38 @@ class OrderController extends AbstractController
         $validStatuses = ['En attente', 'En cours', 'Complétée', 'Annulée'];
 
         if (in_array($newStatus, $validStatuses)) {
+            $oldStatus = $commande->getStatut();
             $commande->setStatut($newStatus);
+
+            // Déduction du stock si la commande passe à "Complétée"
+            if ($newStatus === 'Complétée' && $oldStatus !== 'Complétée') {
+                foreach ($commande->getLigneCommandes() as $ligne) {
+                    $produit = $ligne->getProduit();
+                    if ($produit) {
+                        $newStock = $produit->getStock() - $ligne->getQuantite();
+                        $produit->setStock(max(0, $newStock)); // Empêche le stock négatif
+                        
+                        // Si le stock tombe à zéro, marquer en rupture
+                        if ($produit->getStock() === 0) {
+                            $produit->setIsRupture(true);
+                        }
+                    }
+                }
+            } 
+            // Restauration du stock si la commande quitte le statut "Complétée"
+            elseif ($oldStatus === 'Complétée' && $newStatus !== 'Complétée') {
+                foreach ($commande->getLigneCommandes() as $ligne) {
+                    $produit = $ligne->getProduit();
+                    if ($produit) {
+                        $produit->setStock($produit->getStock() + $ligne->getQuantite());
+                        
+                        if ($produit->getStock() > 0) {
+                            $produit->setIsRupture(false);
+                        }
+                    }
+                }
+            }
+
             $entityManager->flush();
             $this->addFlash('success', 'Le statut de la commande a été mis à jour.');
         }

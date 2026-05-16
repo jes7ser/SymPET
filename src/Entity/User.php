@@ -57,7 +57,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $resetExpiresAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $googleId = null;
+
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class)]
+
     private Collection $commandes;
 
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Avis::class)]
@@ -190,6 +194,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetExpiresAt(?\DateTimeInterface $resetExpiresAt): static
     {
         $this->resetExpiresAt = $resetExpiresAt;
+
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): static
+    {
+        $this->googleId = $googleId;
 
         return $this;
     }

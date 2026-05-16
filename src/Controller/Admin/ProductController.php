@@ -49,7 +49,7 @@ class ProductController extends AbstractController
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                 try {
                     $imageFile->move(
@@ -94,18 +94,18 @@ class ProductController extends AbstractController
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                 try {
                     $imageFile->move(
                         $this->getParameter('products_images_directory'),
                         $newFilename
                     );
-                    
+
                     // Supprimer l'ancienne image si elle existe
                     $oldImage = $produit->getImageUrl();
                     if ($oldImage && !str_starts_with($oldImage, 'http')) {
-                        $oldPath = $this->getParameter('products_images_directory').'/'.$oldImage;
+                        $oldPath = $this->getParameter('products_images_directory') . '/' . $oldImage;
                         if (file_exists($oldPath)) {
                             unlink($oldPath);
                         }
@@ -139,11 +139,11 @@ class ProductController extends AbstractController
     #[Route('/{id}', name: 'admin_product_delete', methods: ['POST'])]
     public function delete(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $produit->getId(), $request->request->get('_token'))) {
             // Supprimer l'image du serveur
             $image = $produit->getImageUrl();
             if ($image) {
-                $path = $this->getParameter('products_images_directory').'/'.$image;
+                $path = $this->getParameter('products_images_directory') . '/' . $image;
                 if (file_exists($path)) {
                     unlink($path);
                 }

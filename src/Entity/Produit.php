@@ -102,8 +102,9 @@ class Produit
 
     public function getImageUrl(): ?string
     {
-        return $this->imageUrl;
+        return $this->imageUrl ?: $this->image;
     }
+
 
     public function setImageUrl(string $imageUrl): static
     {

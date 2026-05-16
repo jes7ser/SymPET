@@ -24,6 +24,8 @@ security:
                 check_path: app_login
                 enable_csrf: true
                 success_handler: App\Security\LoginSuccessHandler
+            custom_authenticator: App\Security\GoogleAuthenticator
+            entry_point: form_login
             logout:
                 path: app_logout
                 # where to redirect after logout
