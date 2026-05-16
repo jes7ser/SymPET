@@ -3,64 +3,88 @@
 {% block title %}Connexion - SymPet{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h3 mb-4 fw-bold text-center">Connexion</h1>
-
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-primary py-4 text-center border-0">
+                <i class="fas fa-paw text-white fs-1 mb-3"></i>
+                <h1 class="h3 text-white fw-bold mb-0">Ravi de vous revoir !</h1>
+            </div>
+            <div class="card-body p-4 p-lg-5">
                 <form method="post">
                     {% if error %}
-                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        <div class="alert alert-danger border-0 shadow-sm rounded-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
                     {% endif %}
 
-                    <div class="mb-3">
-                        <label for="inputEmail" class="form-label">Email</label>
-                        <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                    <div class="form-floating mb-4">
+                        <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control rounded-3" placeholder="name@example.com" autocomplete="email" required autofocus>
+                        <label for="inputEmail">Adresse Email</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="inputPassword" class="form-label">Mot de passe</label>
-                        <div class="input-group">
-                            <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+
+                    <div class="mb-4">
+                        <div class="form-floating input-group shadow-sm rounded-3 overflow-hidden">
+                            <input type="password" name="_password" id="inputPassword" class="form-control border-end-0 py-2" placeholder="••••••••" autocomplete="current-password" required style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                            <label for="inputPassword">Mot de passe</label>
+                            <button class="btn btn-outline-light border border-start-0 text-muted" type="button" id="togglePassword">
                                 <i class="fa fa-eye" id="eyeIcon"></i>
                             </button>
                         </div>
                     </div>
 
-                    <script>
-                        document.getElementById('togglePassword').addEventListener('click', function (e) {
-                            const password = document.getElementById('inputPassword');
-                            const icon = document.getElementById('eyeIcon');
-                            if (password.type === 'password') {
-                                password.type = 'text';
-                                icon.classList.remove('fa-eye');
-                                icon.classList.add('fa-eye-slash');
-                            } else {
-                                password.type = 'password';
-                                icon.classList.remove('fa-eye-slash');
-                                icon.classList.add('fa-eye');
-                            }
-                        });
-                    </script>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
+                            <label class="form-check-label small text-muted" for="rememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none small text-primary fw-bold">Mot de passe oublié ?</a>
+                    </div>
 
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                    <div class="mb-3">
-                        <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none small">Mot de passe oublié ?</a>
-                    </div>
-
-                    <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">
-                        Se connecter
+                    <button class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm transition-all" type="submit">
+                        <i class="fas fa-sign-in-alt me-2"></i> Se connecter
                     </button>
                     
                     <div class="mt-4 text-center">
-                        <span class="text-muted small">Pas encore de compte ?</span>
-                        <a href="{{ path('app_register') }}" class="text-decoration-none small fw-bold">S'inscrire</a>
+                        <span class="text-muted small">Vous n'avez pas de compte ?</span>
+                        <a href="{{ path('app_register') }}" class="text-decoration-none small fw-bold text-primary">Créer un compte</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .transition-all { transition: all 0.3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4) !important; }
+    .form-control:focus { border-color: #6c5ce7; box-shadow: none; }
+    .form-floating > .form-control:focus ~ label { color: #6c5ce7; }
+    .btn-outline-light:hover { background: #f8f9fa; color: #6c5ce7 !important; }
+    .input-group:focus-within { ring: 0.25rem rgba(108, 92, 231, 0.25); border-radius: 0.5rem; }
+</style>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function (e) {
+        const password = document.getElementById('inputPassword');
+        const icon = document.getElementById('eyeIcon');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            this.classList.add('text-primary');
+        } else {
+            password.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            this.classList.remove('text-primary');
+        }
+    });
+</script>
 {% endblock %}
+

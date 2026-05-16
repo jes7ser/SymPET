@@ -46,7 +46,7 @@ class RegistrationController extends AbstractController
 
             // Send confirmation email
             $email = (new Email())
-                ->from('no-reply@sympet.com')
+                ->from('jesserjbeli49@gmail.com')
                 ->to($user->getEmail())
                 ->subject('Confirmez votre compte SymPet')
                 ->html($this->renderView('registration/confirmation_email.html.twig', [
@@ -56,16 +56,13 @@ class RegistrationController extends AbstractController
 
             $mailer->send($email);
 
+
             $this->addFlash('success', 'Votre compte a été créé ! Un email de confirmation vous a été envoyé.');
 
             return $this->redirectToRoute('app_login');
         }
 
-        if ($form->isSubmitted() && !$form->isValid()) {
-            foreach ($form->getErrors(true) as $error) {
-                $this->addFlash('error', $error->getMessage());
-            }
-        }
+
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),

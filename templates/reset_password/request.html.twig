@@ -3,27 +3,55 @@
 {% block title %}Mot de passe oublié - SymPet{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h3 mb-4 fw-bold text-center">Réinitialisation</h1>
-                <p class="text-muted small mb-4 text-center">Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-primary py-4 text-center border-0">
+                <i class="fas fa-key text-white fs-1 mb-3"></i>
+                <h1 class="h3 text-white fw-bold mb-0">Mot de passe oublié ?</h1>
+            </div>
+            <div class="card-body p-4 p-lg-5">
+                <p class="text-muted text-center mb-4">
+                    Pas d'inquiétude ! Entrez votre adresse email ci-dessous et nous vous enverrons un lien magique pour retrouver l'accès à votre compte.
+                </p>
 
                 {{ form_start(requestForm) }}
-                    <div class="mb-3">
-                        {{ form_label(requestForm.email) }}
-                        {{ form_widget(requestForm.email) }}
+                    <div class="form-floating mb-4">
+                        {{ form_widget(requestForm.email, {
+                            'attr': {
+                                'class': 'form-control rounded-3',
+                                'placeholder': 'name@example.com'
+                            }
+                        }) }}
+                        {{ form_label(requestForm.email, 'Adresse Email') }}
                         {{ form_errors(requestForm.email) }}
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Envoyer le lien</button>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm transition-all">
+                        <i class="fas fa-paper-plane me-2"></i> Envoyer le lien
+                    </button>
                     
                     <div class="mt-4 text-center">
-                        <a href="{{ path('app_login') }}" class="text-decoration-none small">Retour à la connexion</a>
+                        <a href="{{ path('app_login') }}" class="text-decoration-none text-muted small hover-primary">
+                            <i class="fas fa-arrow-left me-1"></i> Retour à la connexion
+                        </a>
                     </div>
                 {{ form_end(requestForm) }}
             </div>
         </div>
+        
+        <div class="text-center mt-4">
+            <p class="text-muted small">Vous n'avez pas encore de compte ? <a href="{{ path('app_register') }}" class="fw-bold text-primary text-decoration-none">Inscrivez-vous</a></p>
+        </div>
     </div>
 </div>
+
+<style>
+    .transition-all { transition: all 0.3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4) !important; }
+    .hover-primary:hover { color: #6c5ce7 !important; }
+    .form-floating > .form-control:focus ~ label { color: #6c5ce7; }
+    .form-control:focus { border-color: #6c5ce7; box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25); }
+</style>
 {% endblock %}
+
