@@ -36,7 +36,26 @@
                 Catégorie : <span class="badge bg-secondary">{{ produit.categorie.nom|default('Aucune') }}</span>
             </p>
 
-            <h2 class="text-primary mb-4">{{ produit.prix|number_format(3, ',', ' ') }} DT</h2>
+            <h2 class="text-primary mb-2">{{ produit.prix|number_format(3, ',', ' ') }} DT</h2>
+            
+            <div class="mb-4">
+                {% set avgNote = produit.noteMoyenne %}
+                <div class="d-flex align-items-center gap-2">
+                    <div class="text-warning">
+                        {% for i in 1..5 %}
+                            {% if i <= avgNote|round(0, 'floor') %}
+                                <i class="bi bi-star-fill"></i>
+                            {% elseif i <= avgNote|round(0, 'ceil') and avgNote != avgNote|round(0, 'floor') %}
+                                <i class="bi bi-star-half"></i>
+                            {% else %}
+                                <i class="bi bi-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="fw-bold text-dark">{{ avgNote|number_format(1) }}/5</span>
+                    <span class="text-muted">({{ produit.avis|length }} avis)</span>
+                </div>
+            </div>
 
             <div class="mb-4">
                 <h5>Description</h5>
@@ -65,6 +84,83 @@
                     </button>
                 {% endif %}
                 <a href="{{ path('app_user_vitrine') }}" class="btn btn-outline-secondary btn-lg">Retour</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Avis -->
+    <div class="row mt-5 pt-5 border-top">
+        <div class="col-lg-8">
+            <h3 class="mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-chat-left-text text-primary"></i>
+                Avis des clients ({{ produit.avis|length }})
+            </h3>
+
+            {% if produit.avis is empty %}
+                <div class="alert alert-light border shadow-sm rounded-4 p-4 text-center">
+                    <p class="mb-0 text-muted">Soyez le premier à donner votre avis sur ce produit !</p>
+                </div>
+            {% else %}
+                <div class="d-flex flex-column gap-4">
+                    {% for avi in produit.avis|sort((a, b) => b.dateCreation <=> a.dateCreation) %}
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-weight: 600;">
+                                            {{ avi.utilisateur.prenom|first|upper }}{{ avi.utilisateur.nom|first|upper }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ avi.utilisateur.prenom }} {{ avi.utilisateur.nom }}</h6>
+                                            <small class="text-muted">{{ avi.dateCreation|date('d/m/Y à H:i') }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-warning">
+                                        {% for i in 1..5 %}
+                                            <i class="bi bi-star{{ i <= avi.note ? '-fill' : '' }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="card-text text-dark-emphasis mb-0" style="line-height: 1.6;">
+                                    {{ avi.commentaire|nl2br }}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4 mt-5 mt-lg-0">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 2rem;">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">Laisser un avis</h4>
+                    
+                    {% if app.user %}
+                        {{ form_start(form) }}
+                            <div class="mb-3">
+                                {{ form_label(form.note) }}
+                                {{ form_widget(form.note) }}
+                                {{ form_errors(form.note) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_label(form.commentaire) }}
+                                {{ form_widget(form.commentaire) }}
+                                {{ form_errors(form.commentaire) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">
+                                Envoyer mon avis
+                            </button>
+                        {{ form_end(form) }}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-4">Vous devez être connecté pour donner votre avis.</p>
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-primary rounded-pill px-4">
+                                Se connecter
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

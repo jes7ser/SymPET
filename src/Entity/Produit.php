@@ -61,9 +61,13 @@ class Produit
     #[ORM\Column]
     private bool $isRupture = false;
 
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: Avis::class, cascade: ['persist', 'remove'])]
+    private Collection $avis;
+
     public function __construct()
     {
         $this->ligneCommandes = new ArrayCollection();
+        $this->avis = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -253,5 +257,49 @@ class Produit
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvi(Avis $avi): static
+    {
+        if (!$this->avis->contains($avi)) {
+            $this->avis->add($avi);
+            $avi->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvi(Avis $avi): static
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getProduit() === $this) {
+                $avi->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNoteMoyenne(): float
+    {
+        if ($this->avis->isEmpty()) {
+            return 0;
+        }
+
+        $somme = 0;
+        foreach ($this->avis as $avi) {
+            $somme += $avi->getNote();
+        }
+
+        return $somme / count($this->avis);
     }
 }
