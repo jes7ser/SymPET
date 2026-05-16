@@ -38,11 +38,13 @@ class CommandeController extends AbstractController
 
         $user = $this->getUser();
         $total = $cartService->getTotal();
+        $totalEur = $total * $this->getParameter('tnd_eur_rate');
 
         return $this->render('user/commande/new.html.twig', [
-            'items'  => $items,
-            'total'  => $total,
-            'user'   => $user,
+            'items' => $items,
+            'total' => $total,
+            'totalEur' => $totalEur,
+            'user' => $user,
         ]);
     }
 
@@ -65,15 +67,15 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('app_cart_index');
         }
 
-        $user        = $this->getUser();
+        $user = $this->getUser();
         $modePaiement = $request->request->get('modePaiement', 'livraison');
-        $total        = $cartService->getTotal();
+        $total = $cartService->getTotal();
 
         // Récupération des données du formulaire
-        $adresse     = $request->request->get('adresse', '');
-        $telephone   = $request->request->get('telephone', '');
+        $adresse = $request->request->get('adresse', '');
+        $telephone = $request->request->get('telephone', '');
         $gouvernorat = $request->request->get('gouvernorat', '');
-        $codePostal  = $request->request->get('codePostal', '');
+        $codePostal = $request->request->get('codePostal', '');
 
         // ── Validation côté serveur ──────────────────────────────
         $errors = [];
@@ -94,10 +96,32 @@ class CommandeController extends AbstractController
         }
 
         // Gouvernorat : doit être dans la liste
-        $gouvernorats = ['Tunis','Ariana','Ben Arous','Manouba','Nabeul','Zaghouan',
-            'Bizerte','Béja','Jendouba','Kef','Siliana','Sousse','Monastir',
-            'Mahdia','Sfax','Kairouan','Kasserine','Sidi Bouzid','Gabès',
-            'Médenine','Tataouine','Gafsa','Tozeur','Kébili'];
+        $gouvernorats = [
+            'Tunis',
+            'Ariana',
+            'Ben Arous',
+            'Manouba',
+            'Nabeul',
+            'Zaghouan',
+            'Bizerte',
+            'Béja',
+            'Jendouba',
+            'Kef',
+            'Siliana',
+            'Sousse',
+            'Monastir',
+            'Mahdia',
+            'Sfax',
+            'Kairouan',
+            'Kasserine',
+            'Sidi Bouzid',
+            'Gabès',
+            'Médenine',
+            'Tataouine',
+            'Gafsa',
+            'Tozeur',
+            'Kébili'
+        ];
         if (!in_array($gouvernorat, $gouvernorats)) {
             $errors[] = 'Veuillez choisir un gouvernorat valide.';
         }
@@ -117,15 +141,21 @@ class CommandeController extends AbstractController
         // ────────────────────────────────────────────────────────
         if ($modePaiement === 'stripe') {
             Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+            $currency = $this->getParameter('stripe_currency');
+            $rate = $this->getParameter('tnd_eur_rate');
 
             // Construire les line_items pour Stripe
             $lineItems = [];
             foreach ($items as $item) {
+                // Conversion du prix TND -> EUR (ou autre devise Stripe)
+                // Stripe attend des centimes pour l'EUR (prix * 100)
+                $priceInCents = (int) round($item['produit']->getPrix() * $rate * 100);
+
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'tnd',
+                        'currency' => $currency,
                         'product_data' => ['name' => $item['produit']->getNom()],
-                        'unit_amount'  => (int) round($item['produit']->getPrix() * 1000),
+                        'unit_amount' => $priceInCents,
                     ],
                     'quantity' => $item['quantite'],
                 ];
@@ -133,18 +163,18 @@ class CommandeController extends AbstractController
 
             // Stocker les données de livraison en session pour les récupérer après le retour Stripe
             $request->getSession()->set('commande_data', [
-                'adresse'     => $adresse,
-                'telephone'   => $telephone,
+                'adresse' => $adresse,
+                'telephone' => $telephone,
                 'gouvernorat' => $gouvernorat,
-                'codePostal'  => $codePostal,
+                'codePostal' => $codePostal,
             ]);
 
             $stripeSession = StripeSession::create([
                 'payment_method_types' => ['card'],
-                'line_items'           => $lineItems,
-                'mode'                 => 'payment',
-                'success_url'          => $this->generateUrl('app_user_commande_success', ['stripe' => 1], UrlGeneratorInterface::ABSOLUTE_URL),
-                'cancel_url'           => $this->generateUrl('app_user_commande_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => $this->generateUrl('app_user_commande_success', ['stripe' => 1], UrlGeneratorInterface::ABSOLUTE_URL),
+                'cancel_url' => $this->generateUrl('app_user_commande_new', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ]);
 
             return $this->redirect($stripeSession->url);
@@ -173,19 +203,22 @@ class CommandeController extends AbstractController
         MailerInterface $mailer
     ): Response {
         $commandeId = $request->query->get('id');
-        $isStripe   = $request->query->get('stripe');
+        $isStripe = $request->query->get('stripe');
 
         // Retour depuis Stripe : créer la commande maintenant
         if ($isStripe) {
             $items = $cartService->getFullCart();
-            $user  = $this->getUser();
+            $user = $this->getUser();
             $total = $cartService->getTotal();
 
             // Récupérer les données de livraison stockées en session
             $data = $request->getSession()->get('commande_data', []);
 
             $commande = $this->enregistrerCommande(
-                $em, $user, $items, $total,
+                $em,
+                $user,
+                $items,
+                $total,
                 $data['adresse'] ?? '',
                 $data['telephone'] ?? '',
                 $data['gouvernorat'] ?? '',

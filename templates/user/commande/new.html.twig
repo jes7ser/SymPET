@@ -152,6 +152,14 @@
                             <div class="alert alert-info mt-3 mb-0 small">
                                 <i class="bi bi-info-circle me-1"></i>
                                 En cliquant sur "Valider la commande", vous serez redirigé vers la page de paiement sécurisée Stripe.
+                                <br><br>
+                                <div class="d-flex justify-content-between fw-bold text-primary">
+                                    <span>Montant à payer via Stripe :</span>
+                                    <span>{{ totalEur|number_format(2, ',', ' ') }} €</span>
+                                </div>
+                                <div class="text-muted" style="font-size: 0.8rem;">
+                                    (Taux de conversion appliqué : 1 DT = {{ (totalEur / total)|number_format(2) }} €)
+                                </div>
                             </div>
                         </div>
 

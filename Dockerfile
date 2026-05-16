@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libonig-dev \
+    libxslt1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer les extensions PHP requises par Symfony
@@ -15,7 +16,8 @@ RUN docker-php-ext-install \
     pdo_mysql \
     intl \
     zip \
-    opcache
+    opcache \
+    xsl
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
