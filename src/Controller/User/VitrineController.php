@@ -32,16 +32,43 @@ class VitrineController extends AbstractController
     }
 
     #[Route('/produit/{id}', name: 'app_user_vitrine_show')]
-    public function show(ProduitRepository $produitRepository, int $id): Response
-    {
+    public function show(
+        Request $request,
+        ProduitRepository $produitRepository,
+        \Doctrine\ORM\EntityManagerInterface $entityManager,
+        int $id
+    ): Response {
         $produit = $produitRepository->find($id);
 
         if (!$produit) {
             throw $this->createNotFoundException('Produit introuvable.');
         }
 
+        $avis = new \App\Entity\Avis();
+        $form = $this->createForm(\App\Form\AvisType::class, $avis);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$this->getUser()) {
+                $this->addFlash('warning', 'Vous devez être connecté pour laisser un avis.');
+                return $this->redirectToRoute('app_login');
+            }
+
+            $avis->setProduit($produit);
+            $avis->setUtilisateur($this->getUser());
+            $avis->setDateCreation(new \DateTimeImmutable());
+
+            $entityManager->persist($avis);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre avis a été ajouté avec succès !');
+
+            return $this->redirectToRoute('app_user_vitrine_show', ['id' => $produit->getId()]);
+        }
+
         return $this->render('user/vitrine/show.html.twig', [
             'produit' => $produit,
+            'form' => $form->createView(),
         ]);
     }
 }

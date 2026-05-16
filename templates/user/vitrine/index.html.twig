@@ -115,7 +115,18 @@
 
                             <div class="card-body d-flex flex-column p-3">
                                 <h6 class="card-title fw-bold text-dark mb-1">{{ produit.nom }}</h6>
-                                <h5 class="text-danger fw-bold mb-2">{{ produit.prix|number_format(2, ',', ' ') }} DT</h5>
+                                <h5 class="text-danger fw-bold mb-1">{{ produit.prix|number_format(2, ',', ' ') }} DT</h5>
+                                
+                                <div class="d-flex align-items-center gap-1 mb-2">
+                                    <div class="text-warning small">
+                                        {% set avgNote = produit.noteMoyenne %}
+                                        {% for i in 1..5 %}
+                                            <i class="bi bi-star{{ i <= avgNote|round(0, 'floor') ? '-fill' : (i <= avgNote|round(0, 'ceil') and avgNote != avgNote|round(0, 'floor') ? '-half' : '') }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted" style="font-size: 0.75rem;">({{ produit.avis|length }})</small>
+                                </div>
+
                                 <div class="mb-3">
                                     {% if produit.stock > 10 %}
                                         <span class="text-success small"><i class="bi bi-check-circle-fill"></i> En stock</span>

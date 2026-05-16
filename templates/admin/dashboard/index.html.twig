@@ -33,8 +33,9 @@
             <div class="card-body">
                 <div class="mb-2"><i class="fas fa-star fa-2x opacity-50"></i></div>
                 <h6 class="text-uppercase small fw-bold">Top Produit</h6>
-                <h4 class="fw-bold">{{ bestSeller ? bestSeller.name : 'N/A' }}</h4>
-                <p class="small mb-0">{{ bestSeller ? bestSeller.totalSales ~ ' ventes' : '' }}</p>
+                <h4 class="fw-bold">{{ bestSeller ? bestSeller.nom : 'N/A' }}</h4>
+                <p class="small mb-0">{{ bestSeller ? bestSeller.totalVendu ~ ' ventes' : '' }}</p>
+
             </div>
         </div>
     </div>
@@ -69,9 +70,10 @@
                     <a href="{{ path('admin_category_index') }}" class="btn btn-outline-secondary py-3">
                         <i class="fas fa-tags me-2"></i>Gérer Catégories
                     </a>
-                    <a href="#" class="btn btn-outline-dark py-3">
+                    <a href="{{ path('admin_order_index') }}" class="btn btn-outline-dark py-3">
                         <i class="fas fa-shopping-bag me-2"></i>Voir Commandes
                     </a>
+
                 </div>
             </div>
         </div>

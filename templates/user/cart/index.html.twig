@@ -50,7 +50,11 @@
                                         <td class="text-center fw-semibold">{{ item.produit.prix|number_format(3, ',', ' ') }} DT</td>
                                         <td class="text-center">
                                             <div class="d-inline-flex align-items-center bg-light border rounded">
-                                                <a href="{{ path('app_cart_decrement', {'id': item.produit.id}) }}" class="btn btn-sm btn-light border-0 text-dark" style="width: 30px;"><i class="bi bi-dash"></i></a>
+                                                {% if item.quantite > 1 %}
+                                                    <a href="{{ path('app_cart_decrement', {'id': item.produit.id}) }}" class="btn btn-sm btn-light border-0 text-dark" style="width: 30px;"><i class="bi bi-dash"></i></a>
+                                                {% else %}
+                                                    <span style="width: 30px; display: inline-block;"></span>
+                                                {% endif %}
                                                 <span class="px-3 fw-bold">{{ item.quantite }}</span>
                                                 <a href="{{ path('app_cart_add', {'id': item.produit.id}) }}" class="btn btn-sm btn-light border-0 text-dark" style="width: 30px;"><i class="bi bi-plus"></i></a>
                                             </div>

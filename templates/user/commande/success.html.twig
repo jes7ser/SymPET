@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande confirmée — SymPET{% endblock %}
+
+{% block body %}
+<div style="background-color: #f4f6f9; min-height: 100vh; padding: 40px 0;">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-8">
+
+    {# Message de confirmation #}
+    <div class="card border-0 text-center mb-4" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+        <div class="card-body p-5">
+            <div class="mb-3">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="fw-bold mb-2" style="color: #1a2e4a;">Commande confirmée !</h2>
+            <p class="text-muted mb-1">Merci pour votre commande, <strong>{{ commande.utilisateur.prenom }} {{ commande.utilisateur.nom }}</strong>.</p>
+            <p class="text-muted">Un email de confirmation a été envoyé à <strong>{{ commande.utilisateur.email }}</strong>.</p>
+            <div class="badge bg-success fs-6 px-4 py-2 mt-2">
+                Commande n° {{ commande.id }}
+            </div>
+        </div>
+    </div>
+
+    {# Récapitulatif des articles #}
+    <div class="card border-0 mb-4" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-4" style="color: #1a2e4a;">
+                <i class="bi bi-bag me-2 text-success"></i>Articles commandés
+            </h5>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-center">Prix unitaire</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ligne in commande.ligneCommandes %}
+                        <tr>
+                            <td class="fw-semibold">{{ ligne.produit.nom }}</td>
+                            <td class="text-center">{{ ligne.quantite }}</td>
+                            <td class="text-center">{{ ligne.prixUnitaire|number_format(3, ',', ' ') }} DT</td>
+                            <td class="text-end fw-bold">{{ (ligne.prixUnitaire * ligne.quantite)|number_format(3, ',', ' ') }} DT</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Total</td>
+                            <td class="text-end fw-bold text-danger fs-5">{{ commande.total|number_format(3, ',', ' ') }} DT</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Adresse de livraison et mode de paiement #}
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 h-100" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #1a2e4a;">
+                        <i class="bi bi-geo-alt me-2 text-success"></i>Adresse de livraison
+                    </h6>
+                    <p class="mb-1">{{ commande.adresseLivraison }}</p>
+                    <p class="mb-1">{{ commande.codePostal }} — {{ commande.gouvernorat }}</p>
+                    <p class="mb-0 text-muted"><i class="bi bi-telephone me-1"></i>{{ commande.telephone }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 h-100" style="border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #1a2e4a;">
+                        <i class="bi bi-credit-card me-2 text-success"></i>Mode de paiement
+                    </h6>
+                    {% if commande.modePaiement == 'stripe' %}
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            <i class="bi bi-credit-card-2-front me-1"></i>Paiement par carte
+                        </span>
+                    {% else %}
+                        <span class="badge bg-success fs-6 px-3 py-2">
+                            <i class="bi bi-truck me-1"></i>Paiement à la livraison
+                        </span>
+                    {% endif %}
+                    <p class="text-muted small mt-2 mb-0">
+                        Date : {{ commande.dateCreation|date('d/m/Y') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Boutons d'action #}
+    <div class="d-flex gap-3 justify-content-center">
+        <a href="{{ path('app_user_vitrine') }}" class="btn btn-success btn-lg px-4" style="border-radius: 10px;">
+            <i class="bi bi-shop me-2"></i>Continuer mes achats
+        </a>
+        <a href="{{ path('app_user_commande_historique') }}" class="btn btn-outline-dark btn-lg px-4" style="border-radius: 10px;">
+            <i class="bi bi-clock-history me-2"></i>Mes commandes
+        </a>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
