@@ -265,7 +265,6 @@ class CommandeController extends AbstractController
         $commande->setUtilisateur($user);
         $commande->setDateCreation(new \DateTime());
         $commande->setStatut('En attente');
-
         $commande->setTotal($total);
         $commande->setAdresseLivraison($adresse);
         $commande->setTelephone($telephone);

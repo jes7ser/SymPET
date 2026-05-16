@@ -61,7 +61,6 @@
                 color: #fff !important;
                 box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
             }
-
         </style>
 
         {% block stylesheets %}
@@ -172,7 +171,6 @@
                             <a class="nav-link {{ 'admin_review' in app.request.attributes.get('_route') ? 'active' : '' }}" href="{{ path('admin_review_index') }}"><i class="fas fa-comment-dots me-2"></i>Avis</a>
                         </li>
                     </ul>
-
                 </div>
             </div>
         {% endif %}
